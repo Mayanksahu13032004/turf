@@ -7,6 +7,7 @@ export default function Home() {
     Vaibahc adamne is xllkhbasri is k4i ahtusituesdjd 
     <h1>Vaibhav chamar gandu</h1>
     <h2>idshodnb</h2>
+    <h3>VAibahv hello chhanar</h3>
    </div>
   );
 }

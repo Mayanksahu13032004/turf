@@ -20,6 +20,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ message: "Admin registered successfully" }, { status: 201 });
   } catch (error) {
+    console.log("error is",error)
     return NextResponse.json({ error: "Signup failed" }, { status: 500 });
   }
 }

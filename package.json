@@ -12,6 +12,7 @@
     "bcrypt": "^5.1.1",
     "bcryptjs": "^3.0.1",
     "dotenv": "^16.4.7",
+    "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.10.1",
     "next": "15.1.7",
     "next-auth": "^4.24.11",

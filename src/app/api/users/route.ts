@@ -7,7 +7,7 @@ export async function GET(req: NextRequest) {
   try {
     await connectToDatabase();
     console.log("📢 GET /api/users - Fetching users");
-    
+
     const users: IUser[] = await User.find({});
     return NextResponse.json(users, { status: 200 });
   } catch (error) {

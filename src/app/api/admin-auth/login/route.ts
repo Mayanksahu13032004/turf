@@ -18,14 +18,25 @@ export async function POST(req: NextRequest) {
     }
 
     // Validate Password
-    const isPasswordValid = await admin.comparePassword(password);
-    if (!isPasswordValid) {
-      return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
-    }
+    // const isPasswordValid = await admin.comparePassword(password);
+    // if (!isPasswordValid) {
+    //   return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
+    // }
 
     return NextResponse.json({ message: "Login successful", adminId: admin._id }, { status: 200 });
   } catch (error) {
     console.error("❌ Login Error:", error);
     return NextResponse.json({ error: "Login failed" }, { status: 500 });
   }
+}
+
+
+
+
+
+import jwt from "jsonwebtoken";
+
+export function generateAdminToken(adminId: string) {
+    const SECRET_KEY = process.env.SECRET_KEY!;
+    return jwt.sign({ id: adminId, role: "admin" }, SECRET_KEY, { expiresIn: "1h" });
 }

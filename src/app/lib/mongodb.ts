@@ -22,10 +22,10 @@ export async function connectToDatabase(): Promise<mongoose.Connection> {
 
   if (!cached.promise) {
     cached.promise = mongoose.connect(MONGODB_URI, {}).then((mongoose) => {
-      console.log("✅ MongoDB Connected!");
+      console.log(" MongoDB Connected!");
       return mongoose.connection;
     }).catch((error) => {
-      console.error("❌ MongoDB Connection Error:", error);
+      console.error(" MongoDB Connection Error:", error);
       throw error;
     });
   }

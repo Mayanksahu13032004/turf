@@ -21,6 +21,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@types/jsonwebtoken": "^9.0.8",
     "@types/mongoose": "^5.11.97",
     "@types/node": "^20.17.19",
     "@types/react": "^19.0.10",

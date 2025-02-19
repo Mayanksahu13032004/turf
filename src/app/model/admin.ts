@@ -6,7 +6,7 @@ export interface IAdmin extends Document {
   name: string;
   email: string;
   password: string;
-  role: "admin"; // Only admins can sign up
+  // role: "admin"; // Only admins can sign up
   comparePassword: (enteredPassword: string) => Promise<boolean>;
 }
 
@@ -16,7 +16,7 @@ const AdminSchema: Schema<IAdmin> = new Schema(
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    role: { type: String, enum: ["admin"], default: "admin" },
+    // role: { type: String, enum: ["admirsn"], default: "admin" },
   },
   { timestamps: true }
 );

@@ -1,0 +1,4 @@
+npm install mongoose dotenv
+user-name:vaibhavadmane07
+password:04dCx0vaufHmK0gs
+mongodb+srv://vaibhavadmane07:<db_password>@cluster0.ahavq.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0

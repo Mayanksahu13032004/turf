@@ -34,24 +34,25 @@ const turfs = [
 ];
 
 export default function Home() {
-  const [user, setUser] = useState<User | null>(null); // Define user type
+  const [userStorage, setUserStorage] = useState<any | null>(null);
 
   // Retrieve user data from localStorage when page loads
   useEffect(() => {
-    
-    
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser)); // Parse user data
-      console.log("here is user",JSON.parse(storedUser));
-      
+    if (typeof window !== "undefined") {
+      try {
+        const storedUser = localStorage.getItem("user");
+        setUserStorage(storedUser ? JSON.parse(storedUser) : null);
+      } catch (error) {
+        console.error("Error parsing user data:", error);
+        setUserStorage(null);
+      }
     }
   }, []);
-   
+   console.log("userstorasge darta in root",userStorage);
   // Logout function
   const handleLogout = () => {
     localStorage.removeItem("user"); // Remove user data
-    setUser(null); // Update UI
+    setUserStorage(null); // Update UI
   };
 
   return (
@@ -61,9 +62,9 @@ export default function Home() {
         <div className="text-xl font-bold">🏆 Turf Booking</div>
         
         <div>
-          {user ? (
+          {userStorage ? (
             <div className="flex items-center space-x-4">
-              <span className="text-white font-semibold">Welcome, {user.name}!</span>
+              <span className="text-white font-semibold">Welcome, {userStorage.user.name}!</span>
               <button onClick={handleLogout} className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600">
                 Logout
               </button>

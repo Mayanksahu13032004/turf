@@ -1,5 +1,6 @@
 "use client";
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation"; // Import router for redirection
 
 export default function Login() {
@@ -7,11 +8,26 @@ export default function Login() {
     email: "",
     password: "",
   });
-
+  const [userStorage, setUserStorage] = useState<any | null>(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter(); // For navigation
 
+  // Ensure `localStorage` is accessed only on the client
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const storedUser = localStorage.getItem("user");
+        setUserStorage(storedUser ? JSON.parse(storedUser) : null);
+      } catch (error) {
+        console.error("Error parsing user data:", error);
+        setUserStorage(null);
+      }
+    }
+  }, []);
+
+  // console.log("userstorasge darta",userStorage);
+  
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -38,11 +54,12 @@ export default function Login() {
 
       const data = await res.json(); // Parse response object
 
-      // Store user data (or token) in localStorage
+      // Store user data in localStorage
       localStorage.setItem("user", JSON.stringify(data));
+      setUserStorage(data); // Update state after storing
 
       alert("Login successful!");
-      router.push("/"); // Redirect to root route
+      router.push("/"); // Redirect to home
     } catch (err) {
       setError("Login failed. Please check your credentials.");
     } finally {

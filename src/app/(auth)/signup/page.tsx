@@ -1,4 +1,6 @@
 "use client";
+
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function SignIn() {
@@ -7,8 +9,8 @@ export default function SignIn() {
     email: "",
     password: "",
   });
-
-  const [error, setError] = useState("");
+  const router=useRouter(); 
+   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -36,7 +38,8 @@ export default function SignIn() {
       if (!res.ok) throw new Error("Invalid credentials!");
 
       // Handle successful login (redirect, store token, etc.)
-      alert("Login successful!");
+      alert("SignUp successful!");
+      router.push('/');
     } catch (err) {
       setError("Login failed. Please check your credentials.");
     } finally {

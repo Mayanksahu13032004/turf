@@ -1,37 +1,30 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 interface Turf {
   _id: string;
   name: string;
   location: string;
   pricePerHour: number;
- 
+  size: string;
+  description?: string;
+  imageUrl?: string;
 }
 
 export default function Home() {
   const [userStorage, setUserStorage] = useState<any | null>(null);
   const [turfs, setTurfs] = useState<Turf[]>([]);
-
+const router=useRouter();
   // Fetch turfs from API using GET request
   useEffect(() => {
     const fetchTurfs = async () => {
       try {
-        const response = await fetch("http://localhost:3000/api/users/allturf", {
-          method: "GET", // Explicitly defining the GET method
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-        console.log(response);
+        const response = await fetch("http://localhost:3000/api/users/allturf");
+        if (!response.ok) throw new Error(`Failed to fetch: ${response.status}`);
         
-        if (!response.ok) {
-          throw new Error(`Failed to fetch: ${response.status}`);
-        }
-
         const data = await response.json();
         console.log("API Response:", data);
 
@@ -69,6 +62,20 @@ export default function Home() {
       setUserStorage(null);
     }
   };
+
+  // interface Props{
+  //   props:string;
+  // }
+
+
+const changeToExplore=(id:string)=>{
+  alert("explore");
+  console.log("Ids of the turf explore ",id);
+  router.push(`/user/exploreturf/${id}`);
+
+  
+}
+
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -109,23 +116,27 @@ export default function Home() {
         {turfs.length > 0 ? (
           turfs.map((turf) => (
             <div
+            
               key={turf._id}
-              className="bg-white rounded-lg shadow-md overflow-hidden"
+              className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition"
+              onClick={()=>changeToExplore(turf._id)}
             >
-              {/* <Image
-                src={turf.images?.[0] || "/default-turf.jpg"}
+              <img
+                src={turf.imageUrl}
                 alt={turf.name}
-                width={400}
-                height={250}
                 className="w-full h-48 object-cover"
-              /> */}
+              />
               <div className="p-4">
                 <h3 className="text-lg font-semibold">{turf.name}</h3>
                 <p className="text-gray-600">{turf.location}</p>
-                <p className="text-green-600 font-bold">
+                <p className="text-gray-500 text-sm">Size: {turf.size}</p>
+                {turf.description && (
+                  <p className="text-gray-500 text-sm mt-1">{turf.description}</p>
+                )}
+                <p className="text-green-600 font-bold mt-2">
                   ₹{turf.pricePerHour}/hr
                 </p>
-                <button className="mt-3 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
+                <button className="mt-3 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition">
                   Book Now
                 </button>
               </div>

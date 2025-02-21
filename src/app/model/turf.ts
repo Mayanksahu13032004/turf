@@ -30,7 +30,7 @@ const TurfSchema = new Schema<ITurf>(
             },
         ],
         createdBy: { type: Schema.Types.ObjectId, ref: "Admin", required: true }, // Reference to Admin/User
-        images: { type: [String], default: [] },
+        images: [{type:String}],
     },
     { timestamps: true }
 );

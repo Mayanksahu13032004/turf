@@ -43,12 +43,31 @@ export async function POST(req: NextRequest, { params }: Params) {
         await newTurf.save();
 
         return NextResponse.json(
-            { message: "✅ Turf registered successfully", result: newTurf },
+            { message: " Turf registered successfully", result: newTurf },
             { status: 201 }
         );
 
     } catch (error) {
-        console.error("❌ Error during Turf Registration:", error);
+        console.error(" Error during Turf Registration:", error);
         return NextResponse.json({ error: "Turf registration failed" }, { status: 500 });
     }
+}
+
+
+
+export async function GET(req:NextRequest,{params}:Params) {
+    await connectToDatabase();
+    try {
+        
+
+            const id=params.id;
+            const result=await Turf.find({createdBy:id});
+
+return NextResponse.json({message:"Allturf of admin",result},{status:201});
+
+    } catch (error) {
+        console.error(" Error during get turf by admin:", error);
+        return NextResponse.json({ error: "Error during get turf by admin:" }, { status: 500 });
+    }
+    
 }

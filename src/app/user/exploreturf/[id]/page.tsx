@@ -10,23 +10,21 @@ interface Turf {
   pricePerHour: number;
   size: string;
   description?: string;
-  imageUrl?: string;
+  images?: string[]; // Backend might return an array of images
 }
 
 export default function Explore() {
-  const { id } = useParams(); // Extract ID from the URL
+  const { id } = useParams<{ id: string }>(); // Ensure correct type for `id`
   const [turf, setTurf] = useState<Turf | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchTurf = async () => {
-      try {
-        if (!id) return; // Ensure ID is available
+      if (!id) return; // Ensure ID is available before making API call
 
-        const response = await fetch(
-          `http://localhost:3000/api/users/exploreturf/${id}`
-        );
+      try {
+        const response = await fetch(`http://localhost:3000/api/users/exploreturf/${id}`);
         if (!response.ok) throw new Error(`Failed to fetch: ${response.status}`);
 
         const data = await response.json();
@@ -68,7 +66,7 @@ export default function Explore() {
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-6">
       <div className="max-w-2xl w-full bg-white shadow-lg rounded-lg overflow-hidden">
         <img
-          src={turf.imageUrl}
+          src={turf.images && turf.images.length > 0 ? turf.images[0] : "/fallback-image.jpg"}
           alt={turf.name}
           className="w-full h-64 object-cover"
         />

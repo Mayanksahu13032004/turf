@@ -10,21 +10,24 @@ interface Turf {
   location: string;
   pricePerHour: number;
   size: string;
-  description?: string;
-  imageUrl?: string;
+  surfaceType: string;
+  amenities: string[];
+  availability: { date: string; slots: string[] }[];
+  images?: string[];
+  createdAt: string;
 }
 
 export default function Home() {
   const [userStorage, setUserStorage] = useState<any | null>(null);
   const [turfs, setTurfs] = useState<Turf[]>([]);
-const router=useRouter();
-  // Fetch turfs from API using GET request
+  const router = useRouter();
+
   useEffect(() => {
     const fetchTurfs = async () => {
       try {
         const response = await fetch("http://localhost:3000/api/users/allturf");
         if (!response.ok) throw new Error(`Failed to fetch: ${response.status}`);
-        
+
         const data = await response.json();
         console.log("API Response:", data);
 
@@ -43,7 +46,6 @@ const router=useRouter();
     fetchTurfs();
   }, []);
 
-  // Retrieve user data from localStorage
   useEffect(() => {
     if (typeof window !== "undefined") {
       try {
@@ -63,19 +65,10 @@ const router=useRouter();
     }
   };
 
-  // interface Props{
-  //   props:string;
-  // }
-
-
-const changeToExplore=(id:string)=>{
-  alert("explore");
-  console.log("Ids of the turf explore ",id);
-  router.push(`/user/exploreturf/${id}`);
-
-  
-}
-
+  const changeToExplore = (id: string) => {
+    console.log("Ids of the turf explore", id);
+    router.push(`/user/exploreturf/${id}`);
+  };
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -116,13 +109,12 @@ const changeToExplore=(id:string)=>{
         {turfs.length > 0 ? (
           turfs.map((turf) => (
             <div
-            
               key={turf._id}
-              className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition"
-              onClick={()=>changeToExplore(turf._id)}
+              className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition cursor-pointer"
+              onClick={() => changeToExplore(turf._id)}
             >
               <img
-                src={turf.imageUrl}
+                src={turf.images?.length ? turf.images[0] : "/fallback-image.jpg"}
                 alt={turf.name}
                 className="w-full h-48 object-cover"
               />
@@ -130,9 +122,23 @@ const changeToExplore=(id:string)=>{
                 <h3 className="text-lg font-semibold">{turf.name}</h3>
                 <p className="text-gray-600">{turf.location}</p>
                 <p className="text-gray-500 text-sm">Size: {turf.size}</p>
-                {turf.description && (
-                  <p className="text-gray-500 text-sm mt-1">{turf.description}</p>
+                <p className="text-gray-500 text-sm">Surface: {turf.surfaceType}</p>
+                
+                {/* Amenities Section */}
+                {turf.amenities?.length > 0 && (
+                  <p className="text-gray-500 text-sm">
+                    Amenities: {turf.amenities.join(", ")}
+                  </p>
                 )}
+
+                {/* Availability Section */}
+                {turf.availability?.length > 0 && (
+                  <p className="text-gray-500 text-sm">
+                    Available Dates:{" "}
+                    {turf.availability.map((av) => av.date).join(", ")}
+                  </p>
+                )}
+
                 <p className="text-green-600 font-bold mt-2">
                   ₹{turf.pricePerHour}/hr
                 </p>

@@ -34,24 +34,24 @@ export async function POST(req: NextRequest, { params }: Params) {
     // Convert formData values correctly
     const availabilityArray: { day: string; startTime: string; endTime: string }[] = [];
     const availabilityRaw = formData.getAll("availability") as string[];
-    
+
     availabilityRaw.forEach((entry) => {
       const parts = entry.split(" "); // Example input: "Monday 8AM-10PM"
-      
+
       if (parts.length !== 2) {
         throw new Error("Invalid availability format. Expected 'Day StartTime-EndTime'.");
       }
-    
+
       const [day, timeRange] = parts;
       const [startTime, endTime] = timeRange.split("-");
-    
+
       if (!day || !startTime || !endTime) {
         throw new Error("Missing required availability fields.");
       }
-    
+
       availabilityArray.push({ day, startTime, endTime });
     });
-    
+
 
     const adminId = params.id; // Extract from URL
 
@@ -61,14 +61,14 @@ export async function POST(req: NextRequest, { params }: Params) {
 
     console.log("📢 Admin ID:", adminId);
 
-    const imagecloud=process.env.CLOUDINARY_CLOUD_NAME as string;
-    console.log("image cloud",imagecloud);
-    
+    const imagecloud = process.env.CLOUDINARY_CLOUD_NAME as string;
+    console.log("image cloud", imagecloud);
+
 
     // Validate required fields
-    // if (!name || !location || !pricePerHour || !size || !surfaceType) {
-    //   return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
-    // }
+    if (!name || !location || !pricePerHour || !size || !surfaceType) {
+      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    }
 
     // Process multiple images
     const images: string[] = [];
@@ -77,7 +77,7 @@ export async function POST(req: NextRequest, { params }: Params) {
       if (key.startsWith("images") && value instanceof Blob) {
         // Convert Blob to Buffer
         const buffer = Buffer.from(await value.arrayBuffer());
-        
+
         // Create a temp file path
         const tempFilePath = path.join(os.tmpdir(), `${crypto.randomUUID()}.jpg`);
         await fs.promises.writeFile(tempFilePath, buffer);
@@ -136,19 +136,19 @@ export async function POST(req: NextRequest, { params }: Params) {
 
 
 
-export async function GET(req:NextRequest,{params}:Params) {
-    await connectToDatabase();
-    try {
-        
+export async function GET(req: NextRequest, { params }: Params) {
+  await connectToDatabase();
+  try {
 
-            const id=params.id;
-            const result=await Turf.find({createdBy:id});
 
-return NextResponse.json({message:"Allturf of admin",result},{status:201});
+    const id = params.id;
+    const result = await Turf.find({ createdBy: id });
 
-    } catch (error) {
-        console.error(" Error during get turf by admin:", error);
-        return NextResponse.json({ error: "Error during get turf by admin:" }, { status: 500 });
-    }
-    
+    return NextResponse.json({ message: "Allturf of admin", result }, { status: 201 });
+
+  } catch (error) {
+    console.error(" Error during get turf by admin:", error);
+    return NextResponse.json({ error: "Error during get turf by admin:" }, { status: 500 });
+  }
+
 }

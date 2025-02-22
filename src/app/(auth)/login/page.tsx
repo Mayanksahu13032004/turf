@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation"; // Import router for redirection
-
+import Link from "next/link";
 export default function Login() {
   const [formData, setFormData] = useState({
     email: "",
@@ -89,6 +89,7 @@ export default function Login() {
             onChange={handleChange}
             className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
+           <Link href="/adminlog">admin log in</Link>
           <button
             type="submit"
             disabled={loading}

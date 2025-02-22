@@ -1,50 +1,48 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/app/lib/mongodb";
-import mongoose from "mongoose";
 import Turf from "@/app/model/turf";
 import Order from "@/app/model/order";
 
 interface Params {
-
     params: { id: string };
 }
 
+// ✅ Optimized GET method to fetch Turf data
 export async function GET(req: NextRequest, { params }: Params) {
     await connectToDatabase();
-    try {
 
+    try {
         const turfID = params.id;
-        console.log("Turf id is", turfID);
+        console.log("Turf ID:", turfID);
 
         const result = await Turf.findById(turfID);
+        if (!result) {
+            return NextResponse.json({ error: "Turf not found" }, { status: 404 });
+        }
 
-        return NextResponse.json({ message: "Turf data is successfully.", result }, { status: 201 })
-    }
-    catch (error) {
-        console.error(" Turf data failed :", error);
-        return NextResponse.json({ error: "Turf data fetch failed" }, { status: 500 });
+        return NextResponse.json({ message: "Turf data fetched successfully", result }, { status: 200 });
+
+    } catch (error) {
+        console.error("Error fetching turf data:", error);
+        return NextResponse.json({ error: "Failed to fetch turf data" }, { status: 500 });
     }
 }
 
-
-// make a order turf
-
-export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
+// ✅ Optimized POST method to create a Turf order
+export async function POST(req: NextRequest, { params }: Params) {
     try {
-        // Connect to the database
         await connectToDatabase();
 
         // Parse request body
-        const { 
-            user_id, 
-            turf_id, 
-            date, 
-            startTime, 
-            endTime, 
-            price, 
-            paymentStatus, 
-            transactionId, 
-            status 
+        const {
+            user_id,
+            date,
+            startTime,
+            endTime,
+            price,
+            paymentStatus,
+            transactionId,
+            status,
         } = await req.json();
 
         // Validate required fields
@@ -53,14 +51,14 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
         }
 
         // Extract Turf ID from params
-        const id = params.id;
-        console.log("Order Turf ID:", id);
+        const turf_id = params.id;
+        console.log("Order Turf ID:", turf_id);
         console.log("Order User ID:", user_id);
 
         // Create a new order
-        const result = await Order.create({
+        const newOrder = new Order({
             user_id,
-            turf_id: id,
+            turf_id,
             date,
             startTime,
             endTime,
@@ -70,10 +68,11 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
             status,
         });
 
-        await result.save();
+        // Save the order
+        await newOrder.save();
 
         return NextResponse.json(
-            { message: "Turf order is successful", result },
+            { message: "Turf order placed successfully", result: newOrder },
             { status: 201 }
         );
     } catch (error) {

@@ -6,7 +6,7 @@ import { sendEmail } from "../../../lib/mailer";
 export async function POST(req: NextRequest) {
   try {
     await connectToDatabase();
-    console.log(" POST /api/auth/signup - Registering new user");
+    console.log("POST /api/auth/signup - Registering new user");
 
     const { name, email, password } = await req.json();
 
@@ -29,11 +29,11 @@ export async function POST(req: NextRequest) {
       email,
       "Welcome to Turf!",
       `Hello ${name},\n\nWelcome to Turf and Enjoy. Your account has been successfully created!`,
-      `<p>Hello <strong>${name}</strong>,</p><p>Welcome to <strong>Turf and Enjoyk</strong>. Your account has been successfully created!</p>`
+      `<p>Hello <strong>${name}</strong>,</p><p>Welcome to <strong>Turf and Enjoy</strong>. Your account has been successfully created!</p>`
     );
 
     if (!emailSent) {
-      console.warn(" User registered but email not sent.");
+      console.warn("⚠️ User registered but email not sent.");
     }
 
     return NextResponse.json({ message: "User registered successfully", user: newUser }, { status: 201 });

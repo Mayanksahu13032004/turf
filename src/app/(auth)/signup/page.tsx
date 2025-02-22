@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import Link from "next/link";
 
 export default function SignIn() {
   const [formData, setFormData] = useState({
@@ -77,6 +78,7 @@ export default function SignIn() {
             onChange={handleChange}
             className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
+          <Link href="/adminsign">admin sign in</Link>
           <button
             type="submit"
             disabled={loading}

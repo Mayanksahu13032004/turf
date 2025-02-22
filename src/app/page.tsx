@@ -71,35 +71,33 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="flex items-center justify-between p-4 bg-green-600 text-white shadow-md">
-        <div className="text-xl font-bold">🏆 Turf Booking</div>
+      <header className="flex items-center justify-between p-4 bg-gradient-to-r from-green-600 to-green-700 text-white shadow-lg">
+        <div className="text-2xl font-bold tracking-wide">🏆 Turf Booking</div>
         <div>
           {userStorage ? (
             <div className="flex items-center space-x-4">
-              <span className="text-white font-semibold">
-                Welcome, {userStorage.user?.name || "Guest"}!
-              </span>
+              <span className="font-semibold">Welcome, {userStorage.user?.name || "Guest"}!</span>
               <button
                 onClick={handleLogout}
-                className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition shadow-md"
               >
                 Logout
               </button>
             </div>
           ) : (
-            <>
-              <Link href="/login" className="mr-4 hover:underline">
+            <div className="space-x-4">
+              <Link href="/login" className="hover:underline">
                 Log In
               </Link>
               <Link
                 href="/signup"
-                className="px-4 py-2 bg-white text-green-600 rounded-md hover:bg-gray-200"
+                className="px-4 py-2 bg-white text-green-600 rounded-lg hover:bg-gray-200 transition shadow-md"
               >
                 Sign Up
               </Link>
-            </>
+            </div>
           )}
         </div>
       </header>
@@ -110,46 +108,45 @@ export default function Home() {
           turfs.map((turf) => (
             <div
               key={turf._id}
-              className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition cursor-pointer"
+              className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden hover:shadow-2xl transition cursor-pointer transform hover:-translate-y-1"
               onClick={() => changeToExplore(turf._id)}
             >
               <img
                 src={turf.images?.length ? turf.images[0] : "/fallback-image.jpg"}
                 alt={turf.name}
-                className="w-full h-48 object-cover"
+                className="w-full h-52 object-cover rounded-t-xl"
               />
-              <div className="p-4">
-                <h3 className="text-lg font-semibold">{turf.name}</h3>
+              <div className="p-5 space-y-2">
+                <h3 className="text-xl font-semibold text-gray-900">{turf.name}</h3>
                 <p className="text-gray-600">{turf.location}</p>
-                <p className="text-gray-500 text-sm">Size: {turf.size}</p>
-                <p className="text-gray-500 text-sm">Surface: {turf.surfaceType}</p>
-                
+                <p className="text-gray-500 text-sm">Size: <span className="font-medium">{turf.size}</span></p>
+                <p className="text-gray-500 text-sm">Surface: <span className="font-medium">{turf.surfaceType}</span></p>
+
                 {/* Amenities Section */}
                 {turf.amenities?.length > 0 && (
                   <p className="text-gray-500 text-sm">
-                    Amenities: {turf.amenities.join(", ")}
+                    <span className="font-medium">Amenities:</span> {turf.amenities.join(", ")}
                   </p>
                 )}
 
                 {/* Availability Section */}
                 {turf.availability?.length > 0 && (
                   <p className="text-gray-500 text-sm">
-                    Available Dates:{" "}
-                    {turf.availability.map((av) => av.date).join(", ")}
+                    <span className="font-medium">Available Dates:</span> {turf.availability.map((av) => av.date).join(", ")}
                   </p>
                 )}
 
-                <p className="text-green-600 font-bold mt-2">
+                <p className="text-green-700 font-bold text-lg mt-2">
                   ₹{turf.pricePerHour}/hr
                 </p>
-                <button className="mt-3 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition">
+                <button className="mt-3 w-full px-4 py-2 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition shadow-md">
                   Book Now
                 </button>
               </div>
             </div>
           ))
         ) : (
-          <p className="text-center col-span-3 text-gray-500">
+          <p className="text-center col-span-3 text-gray-500 text-lg">
             No turfs available.
           </p>
         )}

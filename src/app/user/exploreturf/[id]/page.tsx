@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import axios from "axios"; // Import Axios
 
 interface Turf {
   _id: string;
@@ -10,7 +11,7 @@ interface Turf {
   pricePerHour: number;
   size: string;
   description?: string;
-  images?: string[]; // Backend might return an array of images
+  images?: string[];
 }
 
 export default function Explore() {
@@ -18,10 +19,12 @@ export default function Explore() {
   const [turf, setTurf] = useState<Turf | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [userStorage, setUserStorage] = useState<{ user: { _id: string } } | null>(null);
 
   useEffect(() => {
+    // Fetch Turf Details
     const fetchTurf = async () => {
-      if (!id) return; // Ensure ID is available before making API call
+      if (!id) return;
 
       try {
         const response = await fetch(`http://localhost:3000/api/users/exploreturf/${id}`);
@@ -38,8 +41,57 @@ export default function Explore() {
       }
     };
 
+    // Fetch User Data from LocalStorage
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUserStorage(JSON.parse(storedUser));
+    }
+
     fetchTurf();
   }, [id]);
+
+  // Function to Handle Booking
+  const handleOrderTurf = async () => {
+    if (!id) {
+      alert("Turf ID is missing!");
+      return;
+    }
+
+    if (!userStorage || !userStorage.user?._id) {
+      alert("User not logged in!");
+      return;
+    }
+
+    const orderData = {
+      user_id: userStorage.user._id,
+      turf_id: id,
+      date: new Date().toISOString().split("T")[0],
+      startTime: "10:00 AM",
+      endTime: "12:00 PM",
+      price: turf?.pricePerHour || 500, // Default if price not available
+      paymentStatus: "pending",
+      transactionId: "",
+    };
+
+    try {
+      const res = await axios.post(
+        `http://localhost:3000/api/users/exploreturf/${id}`,
+        orderData,
+        { headers: { "Content-Type": "application/json" } }
+      );
+
+      if (res.status === 201) {
+        alert("Order confirmed!");
+        console.log("Order response:", res.data);
+      } else {
+        console.error("Order failed with status:", res.status);
+        alert("Order could not be placed!");
+      }
+    } catch (error) {
+      console.error("Error placing order:", error);
+      alert("An error occurred while placing the order.");
+    }
+  };
 
   if (loading)
     return (
@@ -80,7 +132,10 @@ export default function Explore() {
           <p className="mt-4 text-green-600 font-bold text-xl">
             ₹{turf.pricePerHour}/hr
           </p>
-          <button className="mt-4 w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-700 transition">
+          <button
+            onClick={handleOrderTurf} // Booking function on click
+            className="mt-4 w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-700 transition"
+          >
             Book Now
           </button>
         </div>

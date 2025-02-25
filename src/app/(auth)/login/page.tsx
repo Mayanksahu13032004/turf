@@ -44,7 +44,7 @@ export default function Login() {
     }
 
     try {
-      const res = await fetch("http://localhost:3000/api/users/login", {
+      let res = await fetch("http://localhost:3000/api/users/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -52,11 +52,11 @@ export default function Login() {
 
       if (!res.ok) throw new Error("Invalid credentials!");
 
-      const data = await res.json(); // Parse response object
+       res = await res.json(); // Parse response object
 
       // Store user data in localStorage
-      localStorage.setItem("user", JSON.stringify(data));
-      setUserStorage(data); // Update state after storing
+      localStorage.setItem("user", JSON.stringify(res));
+      setUserStorage(res); // Update state after storing
 
       alert("Login successful!");
       router.push("/"); // Redirect to home

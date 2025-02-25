@@ -30,11 +30,11 @@ const OrderSchema: Schema = new Schema<IOrder>(
       default: "pending",
     },
     transactionId: { type: String },
-    status: {
-      type: String,
-      enum: ["confirmed", "cancelled", "pending"],
-      default: "pending",
-    },
+    // status: {
+    //   type: String,
+    //   enum: ["confirmed", "cancelled", "pending"],
+    //   default: "pending",
+    // },
   },
   { timestamps: true } // Automatically adds createdAt & updatedAt
 );

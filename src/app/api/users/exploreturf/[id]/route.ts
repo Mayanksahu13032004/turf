@@ -28,7 +28,7 @@ export async function GET(req: NextRequest, { params }: Params) {
     }
 }
 
-// ✅ Optimized POST method to create a Turf order
+// Optimized POST method to create a Turf order
 export async function POST(req: NextRequest, { params }: Params) {
     try {
         await connectToDatabase();
@@ -36,13 +36,14 @@ export async function POST(req: NextRequest, { params }: Params) {
         // Parse request body
         const {
             user_id,
+            
             date,
             startTime,
             endTime,
             price,
             paymentStatus,
             transactionId,
-            status,
+            // status,
         } = await req.json();
 
         // Validate required fields
@@ -55,24 +56,35 @@ export async function POST(req: NextRequest, { params }: Params) {
         console.log("Order Turf ID:", turf_id);
         console.log("Order User ID:", user_id);
 
+
+
+const adminTurf=await Turf.findById(turf_id);
+
+console.log("Admin data ",adminTurf);
+console.log("Admin id for order ",adminTurf.createdBy);
+
+
+
+
         // Create a new order
         const newOrder = new Order({
             user_id,
             turf_id,
+            
             date,
             startTime,
             endTime,
             price,
             paymentStatus,
             transactionId,
-            status,
+            // status,
         });
 
         // Save the order
         await newOrder.save();
 
         return NextResponse.json(
-            { message: "Turf order placed successfully", result: newOrder },
+            { message: "Turf order placed successfully", result: newOrder,adminId:adminTurf.createdBy },
             { status: 201 }
         );
     } catch (error) {

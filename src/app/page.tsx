@@ -137,8 +137,7 @@ export default function Home() {
                 <p className="text-gray-500">Surface: {turf.surfaceType}</p>
                 <p className="text-green-700 font-bold">₹{turf.pricePerHour}/hr</p>
                 <button className="mt-3 w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
-                  Book Now
-                </button>
+Know more                </button>
               </div>
             </div>
           ))

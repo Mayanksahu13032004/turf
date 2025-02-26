@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
-import axios from "axios"; // Import Axios
+import { useParams, useRouter } from "next/navigation";
+import axios from "axios";
 
 interface Turf {
   _id: string;
@@ -10,19 +10,21 @@ interface Turf {
   location: string;
   pricePerHour: number;
   size: string;
+  capacity: number;
+  amenities: string[];
   description?: string;
   images?: string[];
 }
 
 export default function Explore() {
-  const { id } = useParams<{ id: string }>(); // Ensure correct type for `id`
+  const router = useRouter();
+  const { id } = useParams<{ id: string }>();
   const [turf, setTurf] = useState<Turf | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [userStorage, setUserStorage] = useState<{ user: { _id: string } } | null>(null);
 
   useEffect(() => {
-    // Fetch Turf Details
     const fetchTurf = async () => {
       if (!id) return;
 
@@ -31,17 +33,14 @@ export default function Explore() {
         if (!response.ok) throw new Error(`Failed to fetch: ${response.status}`);
 
         const data = await response.json();
-        console.log("Fetched Turf Data:", data);
         setTurf(data.result);
       } catch (err) {
-        console.error("Error fetching turf data:", err);
         setError("Failed to load turf details.");
       } finally {
         setLoading(false);
       }
     };
 
-    // Fetch User Data from LocalStorage
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       setUserStorage(JSON.parse(storedUser));
@@ -50,15 +49,10 @@ export default function Explore() {
     fetchTurf();
   }, [id]);
 
-  // Function to Handle Booking
   const handleOrderTurf = async () => {
-    if (!id) {
-      alert("Turf ID is missing!");
-      return;
-    }
-
-    if (!userStorage || !userStorage.user?._id) {
-      alert("User not logged in!");
+    if (!id || !userStorage?.user?._id) {
+      alert("Please log in to book a turf.");
+      router.push("/login");
       return;
     }
 
@@ -68,7 +62,7 @@ export default function Explore() {
       date: new Date().toISOString().split("T")[0],
       startTime: "10:00 AM",
       endTime: "12:00 PM",
-      price: turf?.pricePerHour || 500, // Default if price not available
+      price: turf?.pricePerHour || 500,
       paymentStatus: "pending",
       transactionId: "",
     };
@@ -82,62 +76,60 @@ export default function Explore() {
 
       if (res.status === 201) {
         alert("Order confirmed!");
-        console.log("Order response:", res.data);
+        router.push(`/user/allbookings/${userStorage.user._id}`);
       } else {
-        console.error("Order failed with status:", res.status);
         alert("Order could not be placed!");
       }
     } catch (error) {
-      console.error("Error placing order:", error);
       alert("An error occurred while placing the order.");
     }
   };
 
-  if (loading)
-    return (
-      <div className="flex justify-center items-center min-h-screen bg-gray-100">
-        <div className="text-lg font-semibold text-gray-700">Loading...</div>
-      </div>
-    );
-
-  if (error)
-    return (
-      <div className="flex justify-center items-center min-h-screen bg-gray-100">
-        <div className="text-lg font-semibold text-red-500">{error}</div>
-      </div>
-    );
-
-  if (!turf)
-    return (
-      <div className="flex justify-center items-center min-h-screen bg-gray-100">
-        <div className="text-lg font-semibold text-gray-500">No Turf Found</div>
-      </div>
-    );
+  if (loading) return <div className="flex justify-center items-center min-h-screen">Loading...</div>;
+  if (error) return <div className="flex justify-center items-center min-h-screen text-red-500">{error}</div>;
+  if (!turf) return <div className="flex justify-center items-center min-h-screen">No Turf Found</div>;
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-6">
-      <div className="max-w-2xl w-full bg-white shadow-lg rounded-lg overflow-hidden">
-        <img
-          src={turf.images && turf.images.length > 0 ? turf.images[0] : "/fallback-image.jpg"}
-          alt={turf.name}
-          className="w-full h-64 object-cover"
-        />
-        <div className="p-6">
+    <div className="min-h-screen flex justify-center items-center p-6 bg-gray-100">
+      <div className="max-w-4xl w-full bg-white shadow-lg rounded-lg overflow-hidden grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
+        <div>
           <h1 className="text-3xl font-bold text-gray-800">{turf.name}</h1>
           <p className="text-lg text-gray-600 mt-1">{turf.location}</p>
-          <p className="text-gray-500 text-sm mt-1">Size: {turf.size}</p>
-          {turf.description && (
-            <p className="text-gray-700 text-sm mt-2">{turf.description}</p>
-          )}
-          <p className="mt-4 text-green-600 font-bold text-xl">
-            ₹{turf.pricePerHour}/hr
-          </p>
+          <div className="mt-4 grid gap-4">
+            <div className="bg-gray-100 p-4 rounded-md">
+              <p className="text-gray-500 text-sm">Size</p>
+              <p className="font-semibold">{turf.size}</p>
+            </div>
+            <div className="bg-gray-100 p-4 rounded-md">
+              <p className="text-gray-500 text-sm">Capacity</p>
+              <p className="font-semibold">{turf.capacity} people</p>
+            </div>
+            <div className="bg-gray-100 p-4 rounded-md">
+              <p className="text-gray-500 text-sm">Amenities</p>
+              <p className="font-semibold">{turf.amenities.join(", ")}</p>
+            </div>
+            <div className="bg-gray-100 p-4 rounded-md">
+              <p className="text-gray-500 text-sm">Description</p>
+              <p className="text-sm text-gray-700">{turf.description}</p>
+            </div>
+            <div className="bg-gray-100 p-4 rounded-md">
+              <p className="text-gray-500 text-sm">Location</p>
+              <p className="text-sm text-gray-700">{turf.location}</p>
+            </div>
+          </div>
           <button
-            onClick={handleOrderTurf} // Booking function on click
-            className="mt-4 w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-700 transition"
+            onClick={handleOrderTurf}
+            className="mt-6 w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-700 transition"
           >
             Book Now
           </button>
+        </div>
+        <div>
+          <img
+            src={turf.images && turf.images.length > 0 ? turf.images[0] : "/fallback-image.jpg"}
+            alt={turf.name}
+            className="w-full h-full object-cover rounded-lg"
+          />
         </div>
       </div>
     </div>

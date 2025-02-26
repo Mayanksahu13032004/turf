@@ -80,13 +80,13 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
         // Save the order
         const result = await newOrder.save();
         console.log("Order saved successfully:", result);
-let success=false;
-if(result){
-    success=true;
-}
+        let success = false;
+        if (result) {
+            success = true;
+        }
 
         return NextResponse.json(
-            { message: "Turf order placed successfully", result: newOrder, adminId: adminTurf.createdBy,success },
+            { message: "Turf order placed successfully", result: newOrder, adminId: adminTurf.createdBy, success },
             { status: 201 }
         );
     } catch (error: any) {

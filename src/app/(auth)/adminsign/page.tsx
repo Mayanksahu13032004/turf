@@ -1,4 +1,4 @@
-import AdminSignup from "../../_components/turfheader";
+import AdminSignup from "../../_components/adminsign";
 
 export default function Page() {
   return <AdminSignup />;

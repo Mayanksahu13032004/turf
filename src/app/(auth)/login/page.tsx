@@ -1,19 +1,16 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation"; // Import router for redirection
+import { useRouter } from "next/navigation"; 
 import Link from "next/link";
+
 export default function Login() {
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
+  const [formData, setFormData] = useState({ email: "", password: "" });
   const [userStorage, setUserStorage] = useState<any | null>(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const router = useRouter(); // For navigation
+  const router = useRouter(); 
 
-  // Ensure `localStorage` is accessed only on the client
   useEffect(() => {
     if (typeof window !== "undefined") {
       try {
@@ -26,8 +23,6 @@ export default function Login() {
     }
   }, []);
 
-  // console.log("userstorasge darta",userStorage);
-  
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -52,14 +47,13 @@ export default function Login() {
 
       if (!res.ok) throw new Error("Invalid credentials!");
 
-       res = await res.json(); // Parse response object
+      res = await res.json();
 
-      // Store user data in localStorage
       localStorage.setItem("user", JSON.stringify(res));
-      setUserStorage(res); // Update state after storing
+      setUserStorage(res);
 
       alert("Login successful!");
-      router.push("/"); // Redirect to home
+      router.push("/");
     } catch (err) {
       setError("Login failed. Please check your credentials.");
     } finally {
@@ -68,34 +62,42 @@ export default function Login() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="w-full max-w-md p-6 bg-white rounded-2xl shadow-lg">
-        <h2 className="text-2xl font-bold text-center mb-4">Login</h2>
+    <div className="flex items-center justify-center min-h-screen bg-cover bg-center bg-no-repeat" 
+         style={{ backgroundImage: "url('/turf.png')" }}>
+      <div className="w-full max-w-md p-8 bg-white/20 backdrop-blur-lg rounded-2xl shadow-xl border border-white/40">
+        <h2 className="text-3xl font-bold text-white text-center mb-4">Welcome Back</h2>
         {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
         <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="text"
-            name="email"
-            placeholder="Email"
-            value={formData.email}
-            onChange={handleChange}
-            className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={formData.password}
-            onChange={handleChange}
-            className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-           <Link href="/adminlog">admin log in</Link>
+          <div className="relative">
+            <input
+              type="text"
+              name="email"
+              placeholder="Email"
+              value={formData.email}
+              onChange={handleChange}
+              className="w-full p-3 bg-white/30 text-white border-none rounded-lg focus:ring-2 focus:ring-green-500"
+            />
+          </div>
+          <div className="relative">
+            <input
+              type="password"
+              name="password"
+              placeholder="Password"
+              value={formData.password}
+              onChange={handleChange}
+              className="w-full p-3 bg-white/30 text-white border-none rounded-lg focus:ring-2 focus:ring-green-500"
+            />
+          </div>
+          <div className="flex justify-between text-white text-sm">
+            <Link href="/adminlog" className="hover:underline">Admin Login</Link>
+            <Link href="/forgot-password" className="hover:underline">Forgot Password?</Link>
+          </div>
           <button
             type="submit"
             disabled={loading}
-            className="w-full p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition disabled:opacity-50"
+            className="w-full p-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition disabled:opacity-50"
           >
-            {loading ? "Logging in..." : "Login"}
+            {loading ? "Logging in..." : "Sign In"}
           </button>
         </form>
       </div>

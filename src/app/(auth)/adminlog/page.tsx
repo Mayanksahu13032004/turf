@@ -13,6 +13,7 @@ interface LoginForm {
 
 const AdminLogin: React.FC = () => {
   const [formData, setFormData] = useState<LoginForm>({ email: "", password: "" });
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -21,39 +22,41 @@ const AdminLogin: React.FC = () => {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    setLoading(true);
 
     try {
       const response = await axios.post("http://localhost:3000/api/admin-auth/login", formData);
 
       const adminId = response.data.adminId;
       localStorage.setItem("adminId", adminId); // Store admin ID in localStorage
-      console.log(adminId);
-      
+
       toast.success("Login successful! Redirecting...");
       setFormData({ email: "", password: "" });
 
-      // Redirect after a short delay
       setTimeout(() => {
         router.push("/admin"); // Redirect to admin dashboard
       }, 2000);
     } catch (err: any) {
       toast.error(err.response?.data?.message || "Login failed.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="flex items-center justify-center h-screen bg-gray-100">
+    <div className="flex items-center justify-center min-h-screen bg-cover bg-center bg-no-repeat"
+         style={{ backgroundImage: "url('/turf.png')" }}>
       <ToastContainer position="top-right" autoClose={2000} />
-      <div className="bg-white p-6 rounded-lg shadow-md w-96">
-        <h2 className="text-xl font-semibold mb-4">Admin Login</h2>
-        <form onSubmit={handleSubmit}>
+      <div className="w-full max-w-md p-8 bg-white/20 backdrop-blur-lg rounded-2xl shadow-xl border border-white/40">
+        <h2 className="text-3xl font-bold text-white text-center mb-4">Admin Login</h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
           <input
             type="email"
             name="email"
             placeholder="Email"
             value={formData.email}
             onChange={handleChange}
-            className="w-full p-2 mb-3 border rounded"
+            className="w-full p-3 bg-white/30 text-white border-none rounded-lg focus:ring-2 focus:ring-green-500"
             required
           />
           <input
@@ -62,11 +65,15 @@ const AdminLogin: React.FC = () => {
             placeholder="Password"
             value={formData.password}
             onChange={handleChange}
-            className="w-full p-2 mb-3 border rounded"
+            className="w-full p-3 bg-white/30 text-white border-none rounded-lg focus:ring-2 focus:ring-green-500"
             required
           />
-          <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">
-            Log In
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full p-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition disabled:opacity-50"
+          >
+            {loading ? "Logging in..." : "Log In"}
           </button>
         </form>
       </div>

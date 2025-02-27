@@ -6,10 +6,13 @@ import { useParams } from "next/navigation";
 interface Booking {
   _id: string;
   userId: string;
-  turfId: string;
+  
   date: string;
   timeSlot: string;
   status: string;
+  name:string;
+  turf_id: { _id: string; name: string }; 
+  // turf_id:string;
 }
 
 export default function TurfBookings() {
@@ -56,7 +59,7 @@ export default function TurfBookings() {
             <tr className="bg-gray-200 text-gray-700 uppercase text-sm leading-normal">
               <th className="py-3 px-6 text-left">Booking ID</th>
               <th className="py-3 px-6 text-left">User ID</th>
-              <th className="py-3 px-6 text-left">Turf ID</th>
+              <th className="py-3 px-6 text-left">Turf Name</th>
               <th className="py-3 px-6 text-left">📅 Date</th>
               <th className="py-3 px-6 text-left">⏰ Time Slot</th>
               <th className="py-3 px-6 text-center">Status</th>
@@ -75,7 +78,7 @@ export default function TurfBookings() {
                 >
                   <td className="py-4 px-6">{booking._id}</td>
                   <td className="py-4 px-6">{booking.userId}</td>
-                  <td className="py-4 px-6">{booking.turfId}</td>
+                  <td className="py-4 px-6">{booking.turf_id.name}</td>
                   <td className="py-4 px-6">{booking.date}</td>
                   <td className="py-4 px-6">{booking.timeSlot}</td>
                   <td className="py-4 px-6 text-center">

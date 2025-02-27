@@ -136,7 +136,7 @@ export default function Explore() {
     <>
  <div className="h-[100vh] w-[100%] bg-white text-black flex justify-center items-center ">
  <div className="h-[80%] w-[80%] bg-white flex flex-col gap-14">
-      <div className="flex justify-between px-10"> <span className="font-bold text-3xl">{turf.name}</span> <button className="bg-green-500 rounded-lg px-2 py-3 mr-3">book now</button></div>
+      <div className="flex justify-between px-10"> <span className="font-bold text-3xl">{turf.name}</span> <button  onClick={handleOrderTurf} className="bg-green-500 rounded-lg px-2 py-3 mr-3">book now</button></div>
       <div className="flex  text-white ">
        <div className="flex w-[50%] gap-10">
         <div className="flex flex-col gap-8 w-[30%]  items-center text-black">

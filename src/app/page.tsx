@@ -139,8 +139,8 @@ export default function Home() {
       )}
 
       {/* Hero Section */}
-      <section className="relative w-full h-[70vh] bg-cover bg-center flex flex-col items-center justify-center text-white text-center" style={{ backgroundImage: "url('/image.png')" }}>
-        <div className="absolute inset-0 bg-black bg-opacity-50"></div>
+      <section className="relative w-full h-[100vh] bg-cover bg-center flex flex-col items-center justify-center text-white text-center" style={{ backgroundImage: "url('/image.png')" }}>
+        <div className="absolute inset-0 bg-black bg-opacity-0"></div>
         <div className="relative z-10">
           <h1 className="text-4xl font-bold">Book Your Game, Anytime, Anywhere!</h1>
           <p className="mt-2 text-lg">Find and book the best turfs near you</p>

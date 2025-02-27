@@ -90,48 +90,98 @@ export default function Explore() {
   if (!turf) return <div className="flex justify-center items-center min-h-screen">No Turf Found</div>;
 
   return (
-    <div className="min-h-screen flex justify-center items-center p-6 bg-gray-100">
-      <div className="max-w-4xl w-full bg-white shadow-lg rounded-lg overflow-hidden grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-800">{turf.name}</h1>
-          <p className="text-lg text-gray-600 mt-1">{turf.location}</p>
-          <div className="mt-4 grid gap-4">
-            <div className="bg-gray-100 p-4 rounded-md">
-              <p className="text-gray-500 text-sm">Size</p>
-              <p className="font-semibold">{turf.size}</p>
-            </div>
-            <div className="bg-gray-100 p-4 rounded-md">
-              <p className="text-gray-500 text-sm">Capacity</p>
-              <p className="font-semibold">{turf.capacity} people</p>
-            </div>
-            <div className="bg-gray-100 p-4 rounded-md">
-              <p className="text-gray-500 text-sm">Amenities</p>
-              <p className="font-semibold">{turf.amenities.join(", ")}</p>
-            </div>
-            <div className="bg-gray-100 p-4 rounded-md">
-              <p className="text-gray-500 text-sm">Description</p>
-              <p className="text-sm text-gray-700">{turf.description}</p>
-            </div>
-            <div className="bg-gray-100 p-4 rounded-md">
-              <p className="text-gray-500 text-sm">Location</p>
-              <p className="text-sm text-gray-700">{turf.location}</p>
-            </div>
-          </div>
-          <button
-            onClick={handleOrderTurf}
-            className="mt-6 w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-700 transition"
-          >
-            Book Now
-          </button>
+    // <div>
+    //   <div>
+    //     <div>
+    //       <h1 >{turf.name}</h1>
+    //       <p >{turf.location}</p>
+    //       <div >
+    //         <div >
+    //           <p >Size</p>
+    //           <p >{turf.size}</p>
+    //         </div>
+    //         <div >
+    //           <p >Capacity</p>
+    //           <p >{turf.capacity} people</p>
+    //         </div>
+    //         <div >
+    //           <p >Amenities</p>
+    //           <p >{turf.amenities.join(", ")}</p>
+    //         </div>
+    //         <div >
+    //           <p >Description</p>
+    //           <p >{turf.description}</p>
+    //         </div>
+    //         <div >
+    //           <p >Location</p>
+    //           <p >{turf.location}</p>
+    //         </div>
+    //       </div>
+    //       <button
+    //         onClick={handleOrderTurf}
+           
+    //       >
+    //         Book Now
+    //       </button>
+    //     </div>
+    //     <div>
+    //       <img
+    //         src={turf.images && turf.images.length > 0 ? turf.images[0] : "/fallback-image.jpg"}
+    //         alt={turf.name}
+           
+    //       />
+    //     </div>
+    //   </div>
+    // </div>
+    <>
+ <div className="h-[100vh] w-[100%] bg-white text-black flex justify-center items-center ">
+ <div className="h-[80%] w-[80%] bg-white flex flex-col gap-14">
+      <div className="flex justify-between px-10"> <span className="font-bold text-3xl">{turf.name}</span> <button className="bg-green-500 rounded-lg px-2 py-3 mr-3">book now</button></div>
+      <div className="flex  text-white ">
+       <div className="flex w-[50%] gap-10">
+        <div className="flex flex-col gap-8 w-[30%]  items-center text-black">
+        <div className="flex flex-col gap-1 text-center py-5 w-[100%] bg-white rounded-xl shadow-lg transition-all duration-300 hover:shadow-2xl hover:scale-105">
+  <span className="text-lg opacity-50">Size</span>
+  <span>{turf.size}</span>
+  <span className="text-lg opacity-50">Capacity</span>
+  <span>{turf.capacity}</span>
+</div>
+
+<div className="flex flex-col gap-1 text-center w-[100%] py-5 bg-white rounded-xl shadow-lg transition-all duration-300 hover:shadow-2xl hover:scale-105">
+  <span className="text-lg opacity-50">Amenities</span>
+  <span>{turf.amenities}</span>
+</div>
+
         </div>
-        <div>
-          <img
-            src={turf.images && turf.images.length > 0 ? turf.images[0] : "/fallback-image.jpg"}
-            alt={turf.name}
-            className="w-full h-full object-cover rounded-lg"
-          />
-        </div>
+        <div className="flex flex-col w-[50%] gap-8 text-black">
+  <div className="w-[100%] flex flex-col py-5 px-3 bg-white text-black rounded-xl shadow-lg transition-all duration-300 hover:shadow-2xl hover:scale-105">
+    <span className="opacity-50 text-center">description</span>
+    <span className="text-center">
+      Lorem ipsum, dolor sit amet consectetur adipisicing elit. Modi, assumenda!
+      Lorem, ipsum dolor sit amet consectetur adipisicing elit. Magnam, temporibus.
+    </span>
+  </div>
+  <div className="flex flex-col w-[100%] py-5 px-3 bg-white text-black rounded-xl shadow-lg transition-all duration-300 hover:shadow-2xl hover:scale-105">
+    <span className="opacity-50 text-center">location</span>
+    <span className="text-center">
+      Lorem ipsum, dolor sit amet consectetur adipisicing {turf.location}
+    </span>
+  </div>
+</div>
+
+       </div>
+       <div className="h-[100%] w-[50%] ">
+       <img 
+             className="h-96 rounded-3xl"
+             src={turf.images && turf.images.length > 0 ? turf.images[0] : "/fallback-image.jpg"}
+             alt={turf.name}
+           
+        />
+       </div>
       </div>
     </div>
+     
+ </div>
+    </>
   );
 }

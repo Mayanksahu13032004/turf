@@ -37,35 +37,24 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     try {
         await connectToDatabase();
 
-        // Extract Turf ID from params
         const { id: turf_id } = params || {};
         if (!turf_id) {
             return NextResponse.json({ error: "Invalid Turf ID" }, { status: 400 });
         }
 
-        // Parse request body
         const body = await req.json();
-        console.log("Request Body:", body);
-
         const { user_id, date, startTime, endTime, price, paymentStatus, transactionId } = body;
 
-        // Validate required fields
         if (!user_id || !date || !startTime || !endTime || !price) {
             return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
         }
 
-        // Find the turf in the database
-        const adminTurf = await Turf.findById(turf_id);
-        if (!adminTurf) {
-            console.error(`Turf not found: ${turf_id}`);
-            return NextResponse.json({ error: "Turf not found" }, { status: 404 });
+        // Check if the slot is already booked
+        const existingBooking = await Order.findOne({ turf_id, date, startTime, endTime });
+        if (existingBooking) {
+            return NextResponse.json({ error: "This time slot is already booked. Please select another slot." }, { status: 409 });
         }
 
-        console.log("Order Turf ID:", turf_id);
-        console.log("Order User ID:", user_id);
-        console.log("Admin ID for Order:", adminTurf.createdBy);
-
-        // Create a new order
         const newOrder = new Order({
             user_id,
             turf_id,
@@ -77,21 +66,13 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
             transactionId,
         });
 
-        // Save the order
         const result = await newOrder.save();
-        console.log("Order saved successfully:", result);
-        let success = false;
-        if (result) {
-            success = true;
-        }
 
         return NextResponse.json(
-            { message: "Turf order placed successfully", result: newOrder, adminId: adminTurf.createdBy, success },
+            { message: "Turf order placed successfully", result: newOrder },
             { status: 201 }
         );
     } catch (error: any) {
-        console.error("Error processing order:", error.message || error);
         return NextResponse.json({ error: "Internal Server Error", details: error.message }, { status: 500 });
     }
 }
-

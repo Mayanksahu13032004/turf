@@ -7,6 +7,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Types } from "mongoose";
 import TurfForm from "../_components/creatturf";
+import { IOrder } from "../model/order";
 
 
 export interface ITurf {
@@ -32,7 +33,7 @@ const AdminDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [adm, setAdm] = useState<Admin | null>(null);
   const [turf, setTurf] = useState<ITurf[]>([]);
-
+  const [order, setOrder] = useState<IOrder[]>([]);
   const router = useRouter();
 
   useEffect(() => {
@@ -52,22 +53,47 @@ const AdminDashboard: React.FC = () => {
   useEffect(() => {
     if (adm?.id) {
       fetchTurf();
+      orderuser();
     }
   }, [adm]);
 
-  const fetchTurf = async () => {
+
+
+  const orderuser = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/api/users/allturf");
-      console.log("Response:", response.data);
+      const response = await axios.get("http://localhost:3000/api/adminAllBookings/67c1d7b80bb8ddbd528b7efe");
+      console.log("Response order:", response.data.result);
   
       if (!response.data || !Array.isArray(response.data.result)) {
         throw new Error("Invalid response format from server");
       }
   
-      const foundTurf = response.data.result.filter((t: ITurf) => t.createdBy?.toString() === adm?.id);
+      const res=response.data.result
 
-      setTurf(foundTurf || null);
-      console.log("Filtered Turf:", foundTurf);
+      setOrder( res|| null);
+      
+    } catch (error) {
+      console.error("Error fetching turf:", error);
+      toast.error("Failed to fetch turf.");
+    }
+  };
+
+
+
+
+  const fetchTurf = async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/api/adminturf/67c1d7b80bb8ddbd528b7efe");
+      console.log("Response:", response.data.result);
+  
+      if (!response.data || !Array.isArray(response.data.result)) {
+        throw new Error("Invalid response format from server");
+      }
+  
+      const res=response.data.result
+
+      setTurf( res|| null);
+      
     } catch (error) {
       console.error("Error fetching turf:", error);
       toast.error("Failed to fetch turf.");
@@ -98,6 +124,9 @@ const AdminDashboard: React.FC = () => {
           </li>
           <li className={`p-3 cursor-pointer ${activeTab === "settings" && "bg-blue-700"}`} onClick={() => setActiveTab("settings")}>
             create turf
+          </li>
+          <li className={`p-3 cursor-pointer ${activeTab === "bookedturf" && "bg-blue-700"}`} onClick={() => setActiveTab("bookedturf")}>
+            booked turf
           </li>
           <li className="p-3 cursor-pointer bg-red-600 hover:bg-red-700" onClick={handleLogout}>
             Logout
@@ -137,6 +166,26 @@ const AdminDashboard: React.FC = () => {
 
         {activeTab === "settings" && <h2 className="text-2xl font-bold"><TurfForm admin={adm?.id || ""} />
         </h2>}
+
+        {activeTab === "bookedturf" && (
+  <div>
+    <h2 className="text-2xl font-bold mb-4">Booked Turfs</h2>
+    { order.length > 0 ? (
+      order.map((o) => (
+        <div key={String(o._id)} className="bg-white shadow-md rounded-lg p-4 mb-4">
+          <h3 className="text-xl font-semibold">{o.startTime}</h3>
+          <p className="text-gray-600">Booked by: </p>
+          <p className="text-gray-900 font-bold">Total Price: ₹{o.price}</p>
+          <p className="text-sm text-gray-500">Date: </p>
+          <p className="text-sm text-gray-500">Time Slot: {o.endTime}</p>
+        </div>
+      ))
+    ) : (
+      <p>No bookings found.</p>
+    )}
+  </div>
+)}
+
       </div>
     </div>
   );

@@ -1,30 +1,27 @@
 import nodemailer from "nodemailer";
 
-export async function sendEmail(to: string, subject: string, text: string, html?: string) {
-  const transporter = nodemailer.createTransport({
-    host: process.env.EMAIL_HOST,
-    port: Number(process.env.EMAIL_PORT),
-    secure: false, // Use `true` for port 465, `false` for other ports
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    },
-  });
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,  // Use the App Password generated above
+  },
+});
+
+export const sendVerificationEmail = async (to: string, token: string) => {
+  const verifyLink = `http://localhost:3000/verify-email?token=${token}`;
 
   const mailOptions = {
-    from: `"Turf Booking" <${process.env.EMAIL_USER}>`,
+    from: '"Your App" <your-email@gmail.com>',
     to,
-    subject,
-    text,
-    html,
+    subject: "Verify Your Email",
+    html: `<p>Click <a href="${verifyLink}">here</a> to verify your email.</p>`,
   };
 
   try {
-    const info = await transporter.sendMail(mailOptions);
-    console.log("📩 Email sent:", info.response);
-    return true;
+    await transporter.sendMail(mailOptions);
+    console.log("Verification email sent!");
   } catch (error) {
-    console.error("❌ Email sending failed:", error);
-    return false;
+    console.error("Error sending email:", error);
   }
-}
+};

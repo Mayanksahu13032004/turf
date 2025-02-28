@@ -6,7 +6,7 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <nav className="fixed top-4 left-0 w-full bg-transparent  text-white p-4 z-50">
+    <nav className="fixed top-20 left-0 w-full bg-transparent  text-white p-4 z-50">
       <div className="container mx-auto flex justify-center items-center">
         {/* Hamburger Icon */}
         <button onClick={() => setIsOpen(!isOpen)} className="md:hidden">

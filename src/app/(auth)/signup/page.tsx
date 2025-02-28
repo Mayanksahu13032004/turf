@@ -6,14 +6,14 @@ import Link from "next/link";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-export default function SignIn() {
+export default function SignUp() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
   });
-  const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -30,30 +30,36 @@ export default function SignIn() {
     }
 
     try {
-      const res = await fetch("http://localhost:3000/api/users/sign-up", {
+      const res = await fetch("/api/users/sign-up", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
 
-      if (!res.ok) throw new Error("Invalid credentials!");
+      const data = await res.json();
 
-      toast.success("Sign-up successful! Redirecting...");
-      setFormData({ name: "", email: "", password: "" });
+      if (res.status === 201) {
+        toast.success("Sign-up successful! Please verify your email.");
+        setFormData({ name: "", email: "", password: "" });
 
-      setTimeout(() => {
-        router.push("/");
-      }, 2000);
-    } catch (err) {
-      toast.error("Sign-up failed. Please check your details.");
+        setTimeout(() => {
+          router.push("/verify-email");
+        }, 2000);
+      } else {
+        throw new Error(data.error || "Sign-up failed.");
+      }
+    } catch (err: any) {
+      toast.error(err.message || "Sign-up failed. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-cover bg-center bg-no-repeat"
-         style={{ backgroundImage: "url('/turf2.png')" }}>
+    <div
+      className="flex items-center justify-center min-h-screen bg-cover bg-center bg-no-repeat"
+      style={{ backgroundImage: "url('/turf2.png')" }}
+    >
       <ToastContainer position="top-right" autoClose={2000} />
       <div className="w-full max-w-md p-8 bg-white/20 backdrop-blur-lg rounded-2xl shadow-xl border border-white/40">
         <h2 className="text-3xl font-bold text-white text-center mb-4">Sign Up</h2>

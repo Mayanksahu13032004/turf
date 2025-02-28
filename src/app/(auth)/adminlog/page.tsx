@@ -26,9 +26,12 @@ const AdminLogin: React.FC = () => {
 
     try {
       const response = await axios.post("http://localhost:3000/api/admin-auth/login", formData);
+console.log("response of the turf admin",response);
 
       const adminId = response.data.adminId;
-      localStorage.setItem("adminId", adminId); // Store admin ID in localStorage
+      console.log("Adminid",adminId);
+      
+      localStorage.setItem("adminId", JSON.stringify(adminId)); // Store admin ID in localStorage
 
       toast.success("Login successful! Redirecting...");
       setFormData({ email: "", password: "" });

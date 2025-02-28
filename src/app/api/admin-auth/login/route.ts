@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
     //   return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
     // }
 
-    return NextResponse.json({ message: "Login successful", adminId: admin._id }, { status: 200 });
+    return NextResponse.json({ message: "Login successful", adminId: admin }, { status: 200 });
   } catch (error) {
     console.error("❌ Login Error:", error);
     return NextResponse.json({ error: "Login failed" }, { status: 500 });

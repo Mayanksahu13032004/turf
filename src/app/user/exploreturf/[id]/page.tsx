@@ -77,7 +77,7 @@ export default function Explore() {
       startTime,
       endTime,
       price: turf?.pricePerHour || 500,
-      paymentStatus: "pending",
+      paymentStatus: "completed",
       transactionId: "",
     };
 
@@ -95,7 +95,7 @@ console.log("lali don order",res);
         alert("Order could not be placed!");
       }
     } catch (error) {
-      alert("An error occurred while placing the order.");
+      alert("The time slot is Unavilable ! Please select another time slot");
     }
   };
 

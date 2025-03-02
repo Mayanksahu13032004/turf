@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/app/lib/mongodb"; // Ensure you have a database connection utility
-import Admin from "../../model/admin";
+import Admin from "../../../model/admin";
 
 export async function GET(req: NextRequest) {
   try {

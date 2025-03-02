@@ -43,7 +43,7 @@ export default function SignUp() {
         setFormData({ name: "", email: "", password: "" });
 
         setTimeout(() => {
-          router.push("/verify-email");
+          router.push("/verify-email-user");
         }, 2000);
       } else {
         throw new Error(data.error || "Sign-up failed.");

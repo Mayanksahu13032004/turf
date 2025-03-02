@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/app/lib/mongodb";
 import Admin from "@/app/model/admin";
 import bcrypt from "bcryptjs"; // Import bcrypt for password hashing
+import { sendVerificationEmail } from "../../../lib/mailer";
+import crypto from "crypto";
 
 export async function POST(req: NextRequest) {
   await connectToDatabase(); // Connect to MongoDB
@@ -23,16 +25,21 @@ export async function POST(req: NextRequest) {
 
     // Hash password before saving
     const hashedPassword = await bcrypt.hash(payload.password, 10);
+    
+    const verificationToken = crypto.randomBytes(32).toString("hex");
 
     // Create new admin
     const newAdmin = new Admin({
       name: payload.name,
       email: payload.email,
       password: hashedPassword, // Store hashed password
+      verified: false,
+      verificationToken,
     });
 
     await newAdmin.save();
 
+    await sendVerificationEmail(payload.email, verificationToken,"-adm");
     return NextResponse.json(
       { message: "Admin registered successfully", admin: { name: newAdmin.name, email: newAdmin.email } }, 
       { status: 201 }

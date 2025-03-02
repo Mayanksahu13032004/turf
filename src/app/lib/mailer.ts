@@ -8,8 +8,8 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-export const sendVerificationEmail = async (to: string, token: string) => {
-  const verifyLink = `http://localhost:3000/verify-email?token=${token}`;
+export const sendVerificationEmail = async (to: string, token: string,who:string) => {
+  const verifyLink = `http://localhost:3000/verify-email${who}?token=${token}`;
 
   const mailOptions = {
     from: '"Your App" <your-email@gmail.com>',

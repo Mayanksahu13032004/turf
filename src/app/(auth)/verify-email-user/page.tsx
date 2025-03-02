@@ -19,14 +19,14 @@ export default function VerifyEmail() {
       try {
         const res = await fetch(`/api/users/verify-email?token=${token}`);
         const data = await res.json();
-    
+    console.log(res)
         if (!res.ok) {
           throw new Error(data.message || "Verification failed.");
         }
     
         setMessage("Email verified successfully! Redirecting...");
         
-        setTimeout(() => router.push("/login"), 3000);
+        setTimeout(() => router.push("/"), 3000);
       } catch (error) {
         if (error instanceof Error) {
           setMessage(error.message);

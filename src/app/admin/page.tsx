@@ -18,7 +18,7 @@ export interface ITurf {
   surfaceType: string;
   amenities: string[];
   availability: { day: string; startTime: string; endTime: string }[];
-  createdBy: Types.ObjectId; // Admin who created the turf
+  createdBy: Types.ObjectId;
   images?: string[];
   createdAt: Date;
   updatedAt: Date;
@@ -55,7 +55,6 @@ const AdminDashboard: React.FC = () => {
     }
   }, [adm]);
 
-  // Fetch Orders
   const orderuser = async () => {
     try {
       if (!adm) {
@@ -78,10 +77,9 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
-  // Fetch Turf Data
   const fetchTurf = async () => {
     try {
-     
+      
       const response = await axios.get(`http://localhost:3000/api/adminturf/${adm}`);
       console.log(response.data);
 
@@ -106,71 +104,72 @@ const AdminDashboard: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex h-screen bg-gray-50">
       <ToastContainer position="top-right" autoClose={2000} />
 
-      {/* Sidebar */}
-      <div className="w-64 bg-blue-900 text-white p-5">
+      <div className="w-64 bg-gray-700 text-white p-5">
         <h2 className="text-2xl font-semibold mb-6">Admin Panel</h2>
         <ul>
-          <li
-            className={`p-3 cursor-pointer ${activeTab === "dashboard" && "bg-blue-700"}`}
-            onClick={() => setActiveTab("dashboard")}
-          >
+          <li className={`p-3 text-xl font-medium cursor-pointer ${activeTab === "dashboard" && "bg-gray-600"}`} onClick={() => setActiveTab("dashboard")}>
             Dashboard
           </li>
-          <li
-            className={`p-3 cursor-pointer ${activeTab === "turf" && "bg-blue-700"}`}
-            onClick={() => setActiveTab("turf")}
-          >
+          <li className={`p-3 cursor-pointer text-xl font-medium ${activeTab === "turf" && "bg-gray-600"}`} onClick={() => setActiveTab("turf")}>
             My Turf
           </li>
-          <li
-            className={`p-3 cursor-pointer ${activeTab === "settings" && "bg-blue-700"}`}
-            onClick={() => setActiveTab("settings")}
-          >
+          <li className={`p-3 cursor-pointer text-xl font-medium ${activeTab === "settings" && "bg-gray-600"}`} onClick={() => setActiveTab("settings")}>
             Create Turf
           </li>
-          <li
-            className={`p-3 cursor-pointer ${activeTab === "bookedturf" && "bg-blue-700"}`}
-            onClick={() => setActiveTab("bookedturf")}
-          >
+          <li className={`p-3 cursor-pointer text-xl font-medium ${activeTab === "bookedturf" && "bg-gray-600"}`} onClick={() => setActiveTab("bookedturf")}>
             Booked Turf
           </li>
-          <li className="p-3 cursor-pointer bg-red-600 hover:bg-red-700" onClick={handleLogout}>
+          <li className="p-3 cursor-pointer text-balck bg-gray-400 hover:bg-gray-400" onClick={handleLogout}>
             Logout
           </li>
         </ul>
       </div>
 
-      {/* Main Content */}
       <div className="flex-1 p-6">
-        {activeTab === "dashboard" && <h2 className="text-2xl font-bold">Welcome to Admin Dashboard</h2>}
+        {activeTab === "dashboard" && <h2 className="text-4xl text-gray-700 text-center font-bold">Welcome to Admin Dashboard</h2>}
 
         {activeTab === "turf" && (
-          <div>
-            <h2 className="text-2xl font-bold mb-4">My Turfs</h2>
-            {turf && turf.length > 0 ? (
-              turf.map((t) => (
-                <div key={t._id} className="bg-white shadow-md rounded-lg p-4 mb-4">
-                  {t.images && t.images.length > 0 && (
-                    <img src={t.images[0]} alt={t.name} className="w-full h-40 object-cover rounded-md mb-3" />
-                  )}
-                  <h3 className="text-xl font-semibold">{t.name}</h3>
-                  <p className="text-gray-600">{t.location}</p>
-                  <p className="text-gray-900 font-bold">₹{t.pricePerHour}/hour</p>
-                  <p className="text-sm text-gray-500">Size: {t.size}</p>
-                  <p className="text-sm text-gray-500">Surface: {t.surfaceType}</p>
-                  <p className="text-sm text-gray-500">
-                    Amenities: {t.amenities?.length ? t.amenities.join(", ") : "No amenities available"}
-                  </p>
-                </div>
-              ))
-            ) : (
-              <p>No turfs found.</p>
+  <div>
+    <h2 className="text-3xl font-bold text-gray-800 mb-6">My Turfs</h2>
+    
+    {turf && turf.length > 0 ? (
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        {turf.map((t) => (
+          <div 
+            key={t._id} 
+            className="bg-white shadow-lg rounded-2xl overflow-hidden transform transition duration-300 hover:scale-105"
+          >
+            {t.images && t.images.length > 0 && (
+              <img 
+                src={t.images[0]} 
+                alt={t.name} 
+                className="w-full h-52 object-cover"
+              />
             )}
+
+            <div className="p-5">
+              <h3 className="text-xl font-semibold text-gray-900">{t.name}</h3>
+              <p className="text-gray-600">{t.location}</p>
+              <p className="text-lg font-bold text-blue-600">₹{t.pricePerHour}/hour</p>
+              
+              <div className="mt-3 space-y-1 text-sm text-gray-500">
+                <p><span className="font-medium text-gray-700">Size:</span> {t.size}</p>
+                <p><span className="font-medium text-gray-700">Surface:</span> {t.surfaceType}</p>
+                <p><span className="font-medium text-gray-700">Amenities:</span> {t.amenities?.length ? t.amenities.join(", ") : "No amenities available"}</p>
+              </div>
+            </div>
           </div>
-        )}
+        ))}
+      </div>
+    ) : (
+      <p className="text-gray-500 text-lg">No turfs found.</p>
+    )}
+  </div>
+)}
+
 
         {activeTab === "settings" && <TurfForm admin={adm || ""} />}
 

@@ -23,10 +23,14 @@ export async function GET(req: NextRequest, { params }: Params) {
         //     match: { createdBy: id } // Filters orders where turf_id.createdBy matches adminId
         // });
 
+
+
         console.log("ordeterr for admin", result)
+
+
         return NextResponse.json({ message: "Order of all user of same admin", result }, { status: 200 })
-    }
-    catch (error) {
+}
+        catch (error) {
         console.error("Error processing order:");
         return NextResponse.json({ error: "Not fetch the users order" }, { status: 500 });
     }

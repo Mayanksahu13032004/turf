@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ToastContainer, toast } from "react-toastify";
@@ -55,12 +55,16 @@ export default function Login() {
   };
 
   return (
-    <div
-      className="flex items-center justify-center min-h-screen bg-cover bg-center bg-no-repeat"
-      style={{ backgroundImage: "url('/turf.png')" }}
-    >
-      <ToastContainer position="top-right" autoClose={2000} />
-      <div className="w-full max-w-md p-8 bg-white/20 backdrop-blur-lg rounded-2xl shadow-xl border border-white/40">
+    <div className="w-full h-screen  bg-slate-600 flex justify-center items-center">
+      {/* Embedding the Visme animation */}
+      <iframe
+        src="https://forms.visme.co/formsPlayer/76j1o8gz-simple-newsletter-subscription"
+        className="absolute w-full h-full border-none"
+      ></iframe>
+
+      {/* Login Form Over the Animation */}
+      <div className="relative z-20 w-full  bg-slate-600 max-w-md ml-10 p-8  mt-28 rounded-2xl shadow-xl ">
+        <ToastContainer position="top-right" autoClose={2000} />
         <h2 className="text-3xl font-bold text-white text-center mb-4">Welcome Back</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
@@ -69,7 +73,7 @@ export default function Login() {
             placeholder="Email"
             value={formData.email}
             onChange={handleChange}
-            className="w-full p-3 bg-white/30 text-white border-none rounded-lg focus:ring-2 focus:ring-green-500"
+            className="w-full p-3   text-black border-none rounded-lg focus:ring-2 focus:ring-green-500"
           />
           <input
             type="password"
@@ -77,20 +81,20 @@ export default function Login() {
             placeholder="Password"
             value={formData.password}
             onChange={handleChange}
-            className="w-full p-3 bg-white/30 text-white border-none rounded-lg focus:ring-2 focus:ring-green-500"
+            className="w-full p-3 text-black border-none rounded-lg focus:ring-2 focus:ring-green-500"
           />
           <div className="flex justify-between text-white text-sm">
-            <Link href="/adminlog" className="hover:underline">
+            <Link href="/adminlog" className="hover:underline text-xl font-bold">
               Admin Login
             </Link>
-            <Link href="/forgot-password" className="hover:underline">
+            <Link href="/forgot-password" className="hover:underline text-xl font-bold">
               Forgot Password?
             </Link>
           </div>
           <button
             type="submit"
             disabled={loading}
-            className="w-full p-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition disabled:opacity-50"
+            className="w-full p-3 text-white bg-slate-400 rounded-lg transition disabled:opacity-50"
           >
             {loading ? "Logging in..." : "Sign In"}
           </button>

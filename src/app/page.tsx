@@ -104,6 +104,23 @@ export default function Home() {
       <div className="text-2xl font-bold">TurfMate</div>
     </div>
 
+    <nav className="hidden md:flex space-x-6 text-lg">
+          <Link href="/" className="relative group">
+            Home
+            <span className="absolute left-0 bottom-0 w-0 h-1 bg-white transition-all group-hover:w-full"></span>
+          </Link>
+          <Link href="/contact" className="relative group">
+            Contact
+            <span className="absolute left-0 bottom-0 w-0 h-1 bg-white transition-all group-hover:w-full"></span>
+          </Link>
+          <Link href="/bookings" className="relative group">
+            All Bookings
+            <span className="absolute left-0 bottom-0 w-0 h-1 bg-white transition-all group-hover:w-full"></span>
+          </Link>
+        </nav>
+
+
+
     <div className="hidden md:flex items-center space-x-6">
      
       {userStorage ? (

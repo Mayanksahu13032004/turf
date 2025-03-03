@@ -39,6 +39,25 @@ export default function Home() {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const router = useRouter();
 
+
+  const getUserID = () => {
+    if (typeof window !== "undefined") {
+      const userData = localStorage.getItem("user");
+      return userData ? JSON.parse(userData)?._id : null;
+    }
+    return null;
+  };
+
+
+  const [userID, setUserID] = useState<string | null>(null);
+console.log("userid of the all bookinhgd",userID);
+
+  useEffect(() => {
+    setUserID(getUserID());
+  }, []);
+  
+
+
   // Fetch turfs from API
   useEffect(() => {
     const fetchTurfs = async () => {
@@ -113,7 +132,7 @@ export default function Home() {
             Contact
             <span className="absolute left-0 bottom-0 w-0 h-1 bg-white transition-all group-hover:w-full"></span>
           </Link>
-          <Link href="/bookings" className="relative group">
+          <Link href={`/user/allbookings/${userID}`} className="relative group">
             All Bookings
             <span className="absolute left-0 bottom-0 w-0 h-1 bg-white transition-all group-hover:w-full"></span>
           </Link>
@@ -182,6 +201,7 @@ export default function Home() {
 
         </div>
       </section>
+      
 
       {/* Turf Listings */}
       <section className="p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 flex-grow">

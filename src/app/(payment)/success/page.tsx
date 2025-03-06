@@ -29,6 +29,35 @@ export default function Success() {
     return () => clearTimeout(timer);
   }, []);
 
+  useEffect(() => {
+    if (session_id && userID) {
+      const userData = JSON.parse(localStorage.getItem("user") || "{}");
+      const email = userData?.user?.email; // Get email from localStorage
+  
+      if (!email) {
+        console.error("Error: Email is missing");
+        return; // Prevent API call if email is missing
+      }
+  
+      fetch("/api/payment/send-payment-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userID, session_id, email }), // Include email
+      })
+        .then(async (res) => {
+          if (!res.ok) {
+            throw new Error(`HTTP error! Status: ${res.status}`);
+          }
+          return res.json().catch(() => ({})); // Ensure valid JSON or empty object
+        })
+        .then((data) => console.log("Email sent:", data))
+        .catch((err) => console.error("Email send error:", err));
+    }
+  }, [session_id, userID]);
+  
+  
+  
+
   return (
     <div className="relative flex items-center justify-center min-h-screen bg-gradient-to-br from-green-100 to-blue-200 p-6">
       {/* Animated Confetti Background */}

@@ -40,22 +40,24 @@ export default function Home() {
   const router = useRouter();
 
 
-  const getUserID = () => {
+  const getUserID = (): string | null => {
     if (typeof window !== "undefined") {
       const userData = localStorage.getItem("user");
-      return userData ? JSON.parse(userData)?._id : null;
+      console.log("usersdarda",userData);
+      
+      return userData ? JSON.parse(userData).user._id || JSON.parse(userData).user.id : null;
     }
     return null;
   };
-
+  
 
   const [userID, setUserID] = useState<string | null>(null);
-console.log("userid of the all bookinhgd",userID);
 
   useEffect(() => {
     setUserID(getUserID());
   }, []);
-  
+
+  console.log("User ID:", userID);
 
 
   // Fetch turfs from API
@@ -132,10 +134,13 @@ console.log("userid of the all bookinhgd",userID);
             Contact
             <span className="absolute left-0 bottom-0 w-0 h-1 bg-white transition-all group-hover:w-full"></span>
           </Link>
-          <Link href={`/user/allbookings/${userID}`} className="relative group">
-            All Bookings
-            <span className="absolute left-0 bottom-0 w-0 h-1 bg-white transition-all group-hover:w-full"></span>
-          </Link>
+          <button
+      onClick={() => router.push(`/user/allbookings/${userID}`)}
+      className="relative group px-4 py-2 text-white bg-green-600 rounded-lg hover:bg-green-700 transition-all"
+    >
+      All Bookings
+      <span className="absolute left-0 bottom-0 w-0 h-1 bg-white transition-all group-hover:w-full"></span>
+    </button>
         </nav>
 
 

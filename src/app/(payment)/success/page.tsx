@@ -1,6 +1,6 @@
 "use client";
 
-import { useSearchParams ,useRouter} from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function Success() {
@@ -8,7 +8,21 @@ export default function Success() {
   const session_id = searchParams.get("session_id");
 
   const [showConfetti, setShowConfetti] = useState(true);
-  const router=useRouter();
+  const router = useRouter();
+
+  const getUserID = (): string | null => {
+    if (typeof window !== "undefined") {
+      const userData = localStorage.getItem("user");
+      return userData ? JSON.parse(userData).user._id || JSON.parse(userData).user.id : null;
+    }
+    return null;
+  };
+
+  const [userID, setUserID] = useState<string | null>(null);
+
+  useEffect(() => {
+    setUserID(getUserID());
+  }, []);
 
   useEffect(() => {
     const timer = setTimeout(() => setShowConfetti(false), 3000); // Hide confetti after 3 sec
@@ -16,25 +30,39 @@ export default function Success() {
   }, []);
 
   return (
-    <div className="flex h-screen items-center justify-center bg-gray-100">
-      {showConfetti && <div className="absolute top-0 left-0 w-full h-full bg-[url('/confetti.svg')] bg-cover opacity-30"></div>}
-      
-      <div className="bg-white shadow-lg rounded-2xl p-8 max-w-lg w-full text-center">
-        <h1 className="text-3xl font-bold text-green-600 mb-3">🎉 Payment Successful!</h1>
-        <p className="text-gray-700">Thank you for your booking. Your payment has been successfully processed.</p>
-        
+    <div className="relative flex items-center justify-center min-h-screen bg-gradient-to-br from-green-100 to-blue-200 p-6">
+      {/* Animated Confetti Background */}
+      {showConfetti && (
+        <div className="absolute inset-0 bg-[url('/confetti.svg')] bg-cover bg-center animate-fade opacity-30"></div>
+      )}
+
+      <div className="relative bg-white shadow-2xl rounded-3xl p-10 max-w-2xl w-full text-center border border-gray-300">
+        <h1 className="text-4xl font-extrabold text-green-600 mb-6">🎉 Payment Successful!</h1>
+        <p className="text-lg text-gray-700 font-medium">
+          Thank you for your booking. Your payment has been successfully processed.
+        </p>
+
         {session_id && (
-          <p className="mt-4 text-sm text-gray-500 bg-gray-200 p-2 rounded-md">
+          <p className="mt-5 text-sm text-gray-700 bg-gray-100 py-3 px-5 rounded-md border border-gray-300">
             <span className="font-semibold">Session ID:</span> {session_id}
           </p>
         )}
 
-        <button 
-          onClick={() => router.push("/")} 
-          className="mt-6 px-6 py-3 bg-green-500 text-white rounded-lg shadow-md hover:bg-green-600 transition-all"
-        >
-          Return to Home
-        </button>
+        <div className="mt-8 flex flex-col md:flex-row justify-center gap-6">
+          <button
+            onClick={() => router.push("/")}
+            className="w-full md:w-auto px-8 py-4 bg-green-500 text-white text-lg rounded-lg shadow-md hover:bg-green-600 transition-all"
+          >
+            Return to Home
+          </button>
+
+          <button
+            onClick={() => router.push(`/user/allbookings/${userID}`)}
+            className="w-full md:w-auto px-8 py-4 bg-blue-500 text-white text-lg rounded-lg shadow-md hover:bg-blue-600 transition-all"
+          >
+            View All Bookings
+          </button>
+        </div>
       </div>
     </div>
   );

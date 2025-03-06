@@ -2,13 +2,15 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 interface Booking {
   _id: string;
   userId: string;
   startTime: string;
   endTime: string;
   date: string;
+  price:string;
   paymentStatus:string;
   status: string;
   turf_id: { _id: string; name: string };
@@ -45,6 +47,60 @@ console.log(data.result);
     }
   }, [params.id]);
 
+
+
+// Function to generate PDF
+const generatePDF = (booking: Booking) => {
+  const doc = new jsPDF();
+  doc.setFont("helvetica", "bold");
+
+  // Add Title
+  doc.setFontSize(22);
+  doc.setTextColor(40, 40, 40);
+  doc.text("Turf Booking Confirmation", 20, 20);
+
+  // Add a separator line
+  doc.setLineWidth(0.5);
+  doc.line(20, 25, 190, 25);
+
+  // Booking Details Section
+  doc.setFontSize(14);
+  doc.setFont("helvetica", "normal");
+  doc.setTextColor(60, 60, 60);
+
+  const details = [
+    ["Booking ID", booking._id],
+    ["Turf Name", booking.turf_id.name],
+    ["Date", booking.date],
+    ["Time", `${booking.startTime} - ${booking.endTime}`],
+    ["Amount", booking.price],
+    ["Payment Status", booking.paymentStatus.toUpperCase()],
+  ];
+
+  details.forEach((detail, index) => {
+    doc.text(`${detail[0]}`, 20, 40 + index * 10);
+    doc.setTextColor(20, 100, 200); // Blue color for values
+    doc.text(`${detail[1]}`, 80, 40 + index * 10);
+    doc.setTextColor(60, 60, 60); // Reset color
+  });
+
+  // Add Timestamp of Download
+  const now = new Date();
+  const downloadDate = now.toLocaleDateString();
+  const downloadTime = now.toLocaleTimeString();
+
+  doc.setFontSize(12);
+  doc.setTextColor(100, 100, 100);
+  doc.text(`Downloaded on: ${downloadDate} at ${downloadTime}`, 20, 100);
+
+  // Save the PDF
+  doc.save(`Booking_${booking._id}.pdf`);
+};
+
+
+
+
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-blue-100 py-12 px-6">
       {/* Page Title */}
@@ -63,6 +119,7 @@ console.log(data.result);
               <th className="py-5 px-6 text-left font-bold text-2xl">📅 Date</th>
               <th className="py-5 px-6 text-left font-bold text-2xl">⏰ Time Slot</th>
               <th className="py-5 px-6 text-center font-bold text-2xl">Status</th>
+              <th className="py-5 px-6 text-center font-bold text-2xl">Download recipt</th>
             </tr>
           </thead>
 
@@ -95,6 +152,18 @@ console.log(data.result);
             {booking.paymentStatus}
           </span>
         </td>
+
+        <td className="py-6 px-8 text-center">
+  <button
+    onClick={() => generatePDF(booking)}
+    className="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-700 text-white font-semibold rounded-lg shadow-md hover:scale-105 transition-all"
+  >
+    Download 
+  </button>
+</td>
+
+
+
       </tr>
     ))
   ) : (

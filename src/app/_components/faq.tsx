@@ -11,7 +11,7 @@ const FAQ = () => {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
-    <div className="max-w-4xl mx-auto py-16 px-6">
+    <div className="max-w-4xl mx-auto bg-gray-300 py-16 px-6">
       <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">Frequently Asked Questions</h2>
       <div className="space-y-4">
         {faqs.map((faq, index) => (

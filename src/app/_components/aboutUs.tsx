@@ -2,7 +2,7 @@
 
 const AboutUs = () => {
   return (
-    <div className="bg-gradient-to-b from-gray-50 to-gray-100 py-16">
+    <div className="bg-gradient-to-b from-gray-300 to-gray-100 py-16">
       <div className="max-w-7xl mx-auto px-6">
         <h2 className="text-5xl font-extrabold text-center text-gray-900 mb-12">
           About Us
@@ -53,8 +53,8 @@ const AboutUs = () => {
         </div>
 
         {/* Call to Action Section */}
-        <div className="mt-16 text-center">
-          <h3 className="text-3xl font-bold text-gray-900">Join Our Community</h3>
+        <div className="mt-16 text-center  bg-gray-300">
+          <h3 className="text-3xl font-bold  text-gray-900">Join Our Community</h3>
           <p className="text-lg text-gray-700 mt-4 max-w-3xl mx-auto">
             Be a part of our expanding **sports community**. Start booking today and 
             **experience the future of turf management** like never before!

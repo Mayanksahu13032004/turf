@@ -11,12 +11,14 @@ import Privacy from "./_components/privacy";
 import Notifications from "./_components/notifications";
 import Refer from "./_components/refer";
 
+
 // Define Turf type
 interface Turf {
   _id: string;
   name: string;
   location: string;
   pricePerHour: number;
+  dynamicPricePerHour:number;
   size: string;
   surfaceType: string;
   amenities: string[];
@@ -31,6 +33,9 @@ interface User {
   email: string;
   token: string;
 }
+
+
+
 
 export default function Home() {
   const [userStorage, setUserStorage] = useState<User | null>(null);
@@ -48,6 +53,17 @@ export default function Home() {
     }
     return null;
   };
+  const [price, setPrice] = useState(null);
+
+  useEffect(() => {
+    fetch("/api/updatePrice") // Fetch dynamic price
+      .then((res) => res.json())
+      .then((data) => setPrice(data.dynamicPrice))
+      .catch((err) => console.error("Error fetching price:", err));
+  }, []);
+console.log("price",price);
+
+
 
   const [userID, setUserID] = useState<string | null>(null);
 
@@ -58,17 +74,13 @@ export default function Home() {
   useEffect(() => {
     const fetchTurfs = async () => {
       try {
-        const response = await fetch("http://localhost:3000/api/users/allturf");
+        const response = await fetch("/api/users/allturf");
         if (!response.ok) throw new Error(`Failed to fetch: ${response.status}`);
-
+  
         const data = await response.json();
-
+  
         if (Array.isArray(data.result)) {
-          const turfsWithImages: Turf[] = data.result.map((turf: Turf) => ({
-            ...turf,
-            images: turf.images ?? [],
-          }));
-          setTurfs(turfsWithImages);
+          setTurfs(data.result); // Store turfs with dynamic price already updated
         } else {
           console.error("Unexpected API response format:", data);
           setTurfs([]);
@@ -78,9 +90,10 @@ export default function Home() {
         setTurfs([]);
       }
     };
-
+  
     fetchTurfs();
   }, []);
+  
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -166,6 +179,15 @@ export default function Home() {
                   <h3 className="text-xl font-bold">{turf.name}</h3>
                   <p className="text-sm">📍 {turf.location}</p>
                   <p className="text-green-600 font-bold text-lg">₹{turf.pricePerHour}/hr</p>
+                    <p className="text-green-600 font-semibold">
+        {/* Dyanamic: ₹{turf.dynamicPricePerHour  ? turf.dynamicPricePerHour  : "Loading..."} */}
+      </p>
+      <p className={`text-lg font-semibold ${turf.dynamicPricePerHour < turf.pricePerHour ? "text-red-500" : "text-green-600"}`}>
+  {turf.dynamicPricePerHour < turf.pricePerHour 
+    ? `🔥 Discounted Price: ₹${turf.dynamicPricePerHour}/hour`
+    : `💰 Dynamic Price: ₹${turf.dynamicPricePerHour}/hour`}
+</p>
+
                 </div>
                 <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-80 text-white text-lg font-semibold opacity-0 group-hover:opacity-100 transition-all">
                   Available Slot: {randomSlot}
@@ -177,6 +199,10 @@ export default function Home() {
           <p className="text-center col-span-3 text-gray-500">No turfs found.</p>
         )}
       </section>
+
+
+      
+      
 <AboutUs/>
 <Terms/>
 <Privacy/>

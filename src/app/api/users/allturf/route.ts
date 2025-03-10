@@ -1,9 +1,9 @@
 import { connectToDatabase } from "@/app/lib/mongodb";
 import Turf from "@/app/model/turf";
 import mongoose from "mongoose";
-import { NextResponse } from "next/server";
+import { NextResponse ,NextRequest} from "next/server";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
     await connectToDatabase();
     try {
         

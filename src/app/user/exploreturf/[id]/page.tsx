@@ -5,11 +5,13 @@ import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
 import BookTurfButton from "../../../_components/BookTurfButton";
 
+
 interface Turf {
   _id: string;
   name: string;
   location: string;
   pricePerHour: number;
+  dynamicPricePerHour:number;
   size: string;
   capacity: number;
   amenities: string[];
@@ -72,7 +74,7 @@ export default function Explore() {
       date: selectedDate,
       startTime,
       endTime,
-      price: turf?.pricePerHour || 500,
+      price: turf?.dynamicPricePerHour || 500,
       paymentStatus: "completed",
       transactionId: "",
     };
@@ -105,7 +107,7 @@ export default function Explore() {
         {/* Turf Header */}
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold">{turf.name}</h1>
-          <BookTurfButton turfId={turf._id} price={turf.pricePerHour} date={selectedDate} time={time} />
+          <BookTurfButton turfId={turf._id} price={turf.dynamicPricePerHour} date={selectedDate} time={time} />
         </div>
 
         {/* Turf Details */}
@@ -142,6 +144,8 @@ export default function Explore() {
             />
           </div>
         </div>
+
+
 
         {/* Date Selection */}
         <div className="mt-6">

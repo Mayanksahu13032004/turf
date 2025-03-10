@@ -43,16 +43,29 @@ export default function Home() {
   const [searchLocation, setSearchLocation] = useState<string>("");
   const [searchName, setSearchName] = useState<string>("");
   const router = useRouter();
-
   const getUserID = (): string | null => {
     if (typeof window !== "undefined") {
-      const userData = localStorage.getItem("user");
-      return userData
-        ? JSON.parse(userData).user._id || JSON.parse(userData).user.id
-        : null;
+      try {
+        const userData = localStorage.getItem("user");
+        if (userData) {
+          const parsedData = JSON.parse(userData);
+  
+          // Ensure `user` exists inside parsedData
+          const user = parsedData?.user || parsedData;
+  
+          if (!user) return null;
+  
+          return user._id || user.id || null;
+        }
+      } catch (error) {
+        console.error("Error parsing user data:", error);
+        return null;
+      }
     }
     return null;
   };
+  
+  
   const [price, setPrice] = useState(null);
 
   useEffect(() => {

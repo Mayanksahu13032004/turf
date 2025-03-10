@@ -19,7 +19,14 @@ const Header = () => {
   const getUserID = (): string | null => {
     if (typeof window !== "undefined") {
       const userData = localStorage.getItem("user");
-      return userData ? JSON.parse(userData).user._id || JSON.parse(userData).user.id : null;
+      try {
+        const parsed = userData ? JSON.parse(userData) : null;
+        return parsed?.user?._id || parsed?.user?.id || null;
+      } catch (error) {
+        console.error("Error parsing userData:", error);
+        return null;
+      }
+      
     }
     return null;
   };

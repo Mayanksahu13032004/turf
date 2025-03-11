@@ -6,6 +6,16 @@ import axios from "axios";
 import BookTurfButton from "../../../_components/BookTurfButton";
 
 
+
+
+interface Review {
+  _id: string;
+  userId: string;
+  rating: number;
+  comment: string;
+}
+
+
 interface Turf {
   _id: string;
   name: string;
@@ -29,7 +39,11 @@ export default function Explore() {
 
   const [selectedDate, setSelectedDate] = useState<string>("");
   const [time, setTime] = useState<string>("");
+  const [rating, setRating] = useState<number>(0);
+  const [comment, setComment] = useState<string>("");
 
+
+  
   useEffect(() => {
     if (!id) return;
 
@@ -56,6 +70,39 @@ export default function Explore() {
     fetchTurf();
   }, [id]);
 
+
+  const handleReviewSubmit = async () => {
+    if (!rating || !comment) {
+      alert("Please provide a rating and a comment.");
+      return;
+    }
+
+    if (!userStorage?.user?._id) {
+      alert("Please log in to submit a review.");
+      return;
+    }
+
+    const reviewData = {
+      userId: userStorage.user._id,
+      turf_id: id,
+      rating,
+      comment,
+    };
+
+    try {
+      const result = await axios.post(`http://localhost:3000/api/users/review/${id}`, reviewData);
+      if (result.status === 201) {
+        alert("Review submitted successfully!");
+        setRating(0);
+        setComment("");
+      } else {
+        alert("Failed to submit the review.");
+      }
+    } catch (error) {
+      alert("Error submitting review.");
+    }
+  };
+  
   const handleOrderTurf = async (startTime: string, endTime: string) => {
     if (!id || !userStorage?.user?._id) {
       alert("Please log in to book a turf.");
@@ -95,6 +142,9 @@ export default function Explore() {
       alert("The time slot is unavailable! Please select another time slot.");
     }
     setTime(`${startTime}-${endTime}`);
+
+
+
   };
 
   if (loading) return <div className="flex justify-center items-center min-h-screen">Loading...</div>;
@@ -146,6 +196,30 @@ export default function Explore() {
         </div>
 
 
+        <div className="mt-6">
+          <h2 className="text-lg font-bold mb-2">Submit a Review</h2>
+          <input
+            type="number"
+            placeholder="Rating"
+            value={rating}
+            onChange={(e) => setRating(Number(e.target.value))}
+            className="w-full p-2 border rounded-md mb-2"
+          />
+          <input
+            type="text"
+            placeholder="Enter comment"
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+            className="w-full p-2 border rounded-md mb-2"
+          />
+          <button
+            onClick={handleReviewSubmit}
+            className="px-4 py-2 bg-blue-500 text-white rounded-md shadow-md"
+          >
+            Submit Review
+          </button>
+        </div>
+
 
         {/* Date Selection */}
         <div className="mt-6">
@@ -160,6 +234,10 @@ export default function Explore() {
             className="w-full p-2 border rounded-md shadow-sm focus:ring-2 focus:ring-green-500"
           />
         </div>
+
+
+ 
+        
 
         {/* Available Time Slots */}
         <div className="mt-6">

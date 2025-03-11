@@ -10,6 +10,7 @@ interface Params {
 
 // ✅ Optimized GET method to fetch Turf data
 export async function GET(req: NextRequest, { params }: Params) {
+    // Data base connection
     await connectToDatabase();
 
     try {
@@ -24,7 +25,7 @@ export async function GET(req: NextRequest, { params }: Params) {
         return NextResponse.json({ message: "Turf data fetched successfully", result }, { status: 200 });
 
     } catch (error) {
-        console.error("Error fetching turf data:", error);
+        console.error("Error fetching turf data-", error);
         return NextResponse.json({ error: "Failed to fetch turf data" }, { status: 500 });
     }
 }

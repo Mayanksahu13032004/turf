@@ -6,6 +6,8 @@ export interface IUser extends Document {
   password: string;
   verified: boolean;
   verificationToken?: string;
+  resetToken?: string;
+  resetTokenExpiry?: Date;
   createdAt: Date;
 }
 
@@ -16,6 +18,8 @@ const UserSchema: Schema = new Schema(
     password: { type: String, required: true },
     verified: { type: Boolean, default: false },
     verificationToken: { type: String },
+    resetToken: { type: String }, // ✅ added
+    resetTokenExpiry: { type: Date }, // ✅ added
   },
   { timestamps: true }
 );

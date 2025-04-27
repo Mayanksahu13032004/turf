@@ -32,6 +32,7 @@ interface User {
   name: string;
   email: string;
   token: string;
+  
 }
 
 
@@ -139,9 +140,8 @@ console.log("price",price);
 
       {/* Hero Section */}
       <section
-        className="relative w-full h-[100vh] bg-cover bg-center flex flex-col items-center justify-center text-white text-center"
-        style={{ backgroundImage: "url('/image.png')" }}
-      >
+  className="relative w-full h-[40vh] md:h-[100vh] bg-[url('/image.png')] bg-cover bg-center flex flex-col items-center justify-center text-white text-center"
+>
         <div className="absolute inset-0 bg-black bg-opacity-0"></div>
         <div className="relative z-10">
           <h1 className="text-4xl font-bold">Book Your Game, Anytime, Anywhere!</h1>
@@ -165,62 +165,70 @@ console.log("price",price);
         </div>
       </section>
 
-      {/* Turf Listings */}
-      <section className="p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 flex-grow">
-        {filteredTurfs.length > 0 ? (
-          filteredTurfs.map((turf) => {
-            const randomSlot =
-              turf.availability?.length &&
-              turf.availability[Math.floor(Math.random() * turf.availability.length)]
-                ?.slots?.length
-                ? turf.availability[Math.floor(Math.random() * turf.availability.length)]
-                    .slots[0]
-                : "No slots available";
+{/* Turf Listings */}
+<section className="px-4 py-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+  {filteredTurfs.length > 0 ? (
+    filteredTurfs.map((turf) => {
+      const randomSlot =
+        turf.availability?.length &&
+        turf.availability[Math.floor(Math.random() * turf.availability.length)]?.slots?.length
+          ? turf.availability[Math.floor(Math.random() * turf.availability.length)].slots[0]
+          : "No slots available";
 
-            return (
-              <div
-                key={turf._id}
-                className="relative group bg-gray-200 text-black rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all transform hover:-translate-y-2 cursor-pointer"
-                onClick={() => router.push(`/user/exploreturf/${turf._id}`)}
-              >
-                <img
-                  src={turf.images?.[0] || "/fallback-image.jpg"}
-                  alt={turf.name}
-                  className="w-full h-52 object-cover rounded-t-2xl"
-                />
-                <div className="p-5">
-                  <h3 className="text-xl font-bold">{turf.name}</h3>
-                  <p className="text-sm">📍 {turf.location}</p>
-                  <p className="text-green-600 font-bold text-lg">₹{turf.pricePerHour}/hr</p>
-                    <p className="text-green-600 font-semibold">
-        {/* Dyanamic: ₹{turf.dynamicPricePerHour  ? turf.dynamicPricePerHour  : "Loading..."} */}
-      </p>
-      <p className={`text-lg font-semibold ${turf.dynamicPricePerHour < turf.pricePerHour ? "text-red-500" : "text-green-600"}`}>
-  {turf.dynamicPricePerHour < turf.pricePerHour 
-    ? `🔥 Discounted Price: ₹${turf.dynamicPricePerHour}/hour`
-    : `💰 Dynamic Price: ₹${turf.dynamicPricePerHour}/hour`}
-</p>
+      return (
+        <div
+          key={turf._id}
+          onClick={() => router.push(`/user/exploreturf/${turf._id}`)}
+          className="relative group bg-white rounded-2xl shadow-md overflow-hidden cursor-pointer hover:shadow-xl transform hover:-translate-y-2 transition-all flex flex-col"
+        >
+          {/* Image */}
+          <div className="w-full h-48 sm:h-52 md:h-56 overflow-hidden">
+            <img
+              src={turf.images?.[0] || "/fallback-image.jpg"}
+              alt={turf.name}
+              className="w-full h-full object-cover"
+            />
+          </div>
 
-                </div>
-                <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-80 text-white text-lg font-semibold opacity-0 group-hover:opacity-100 transition-all">
-                  Available Slot: {randomSlot}
-                </div>
-              </div>
-            );
-          })
-        ) : (
-          <p className="text-center col-span-3 text-gray-500">No turfs found.</p>
-        )}
-      </section>
+          {/* Content */}
+          <div className="flex flex-col flex-grow p-4">
+            <h3 className="text-lg font-bold mb-1 truncate">{turf.name}</h3>
+            <p className="text-sm text-gray-500 mb-2 truncate">📍 {turf.location}</p>
 
+            <div className="mt-auto">
+              <p className="text-green-600 font-bold text-base">₹{turf.pricePerHour}/hr</p>
+              {turf.dynamicPricePerHour && (
+                <p
+                  className={`text-sm font-semibold mt-1 ${
+                    turf.dynamicPricePerHour < turf.pricePerHour
+                      ? "text-red-500"
+                      : "text-green-600"
+                  }`}
+                >
+                  {turf.dynamicPricePerHour < turf.pricePerHour
+                    ? `🔥 ₹${turf.dynamicPricePerHour}/hour`
+                    : `💰 ₹${turf.dynamicPricePerHour}/hour`}
+                </p>
+              )}
+            </div>
+          </div>
 
-      
-      
-<AboutUs/>
-<Terms/>
+          {/* Hover Overlay */}
+          <div className="absolute inset-0 bg-black bg-opacity-70 flex items-center justify-center text-white text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            Slot: {randomSlot}
+          </div>
+        </div>
+      );
+    })
+  ) : (
+    <p className="text-center col-span-full text-gray-500 text-lg">No turfs found.</p>
+  )}
+</section>
+
+<Terms  />
 <Privacy/>
 <Notifications/>
-<Refer/>
+
 
       
     </div>

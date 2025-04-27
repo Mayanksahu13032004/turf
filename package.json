@@ -16,7 +16,7 @@
     "bcryptjs": "^3.0.1",
     "cloudinary": "^1.41.3",
     "dotenv": "^16.4.7",
-    "framer-motion": "^12.4.7",
+    "framer-motion": "^12.9.2",
     "jsonwebtoken": "^9.0.2",
     "jspdf": "^3.0.0",
     "jspdf-autotable": "^5.0.2",

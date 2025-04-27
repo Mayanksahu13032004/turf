@@ -26,7 +26,6 @@ const Header = () => {
         console.error("Error parsing userData:", error);
         return null;
       }
-      
     }
     return null;
   };
@@ -63,6 +62,7 @@ const Header = () => {
         <div className="text-2xl font-bold">TurfMate</div>
       </div>
 
+      {/* Navigation for larger screens */}
       <nav className="hidden md:flex space-x-6 text-lg">
         <Link href="/" className="relative group">Home</Link>
         <Link href="/contact" className="relative group">Contact</Link>
@@ -75,6 +75,7 @@ const Header = () => {
         </button>
       </nav>
 
+      {/* Authentication buttons for larger screens */}
       <div className="hidden md:flex items-center space-x-6">
         {userStorage ? (
           <button onClick={handleLogout} className="px-4 py-2 bg-red-500 rounded-lg hover:bg-red-600">Logout</button>
@@ -85,6 +86,39 @@ const Header = () => {
           </>
         )}
       </div>
+
+      {/* Hamburger menu for mobile screens */}
+      <div className="md:hidden flex items-center">
+        <button
+          className="text-white text-2xl"
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+        >
+          {isMenuOpen ? <X /> : <Menu />}
+        </button>
+      </div>
+
+      {/* Mobile menu */}
+      {isMenuOpen && (
+        <div className="md:hidden absolute top-16 left-0 w-full bg-green-700 text-white p-5 space-y-4 z-10">
+          <Link href="/" className="block">Home</Link>
+          <Link href="/contact" className="block">Contact</Link>
+          <Link href="/about" className="block">About Us</Link>
+          <button
+            onClick={() => router.push(`/user/allbookings/${userID}`)}
+            className="block px-4 py-2 text-white bg-green-600 rounded-lg hover:bg-green-700 transition-all"
+          >
+            All Bookings
+          </button>
+          {userStorage ? (
+            <button onClick={handleLogout} className="block px-4 py-2 bg-red-500 rounded-lg hover:bg-red-600">Logout</button>
+          ) : (
+            <>
+              <Link href="/login" className="block text-center hover:underline">Log In</Link>
+              <Link href="/signup" className="block px-4 py-2 bg-white text-green-600 rounded-lg hover:bg-gray-200">Sign Up</Link>
+            </>
+          )}
+        </div>
+      )}
     </header>
   );
 };

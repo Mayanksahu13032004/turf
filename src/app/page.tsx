@@ -9,7 +9,9 @@ import AboutUs from "./_components/aboutUs";
 import Terms from "./_components/terms";
 import Privacy from "./_components/privacy";
 import Notifications from "./_components/notifications";
+
 import Refer from "./_components/refer";
+import Vlog from "./_components/vlog";
 
 
 // Define Turf type
@@ -224,6 +226,9 @@ console.log("price",price);
     <p className="text-center col-span-full text-gray-500 text-lg">No turfs found.</p>
   )}
 </section>
+
+<Vlog/>
+<AboutUs />
 
 <Terms  />
 <Privacy/>

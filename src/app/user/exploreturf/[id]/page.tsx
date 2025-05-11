@@ -185,26 +185,40 @@ export default function Explore() {
             ))}
           </div>
 
-          <div>
-            <img
-              className="w-full h-60 object-cover rounded-lg shadow-md"
-              src={turf.images?.[0] || "/fallback-image.jpg"}
-              alt={turf.name}
-            />
-          </div>
+         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+  {turf.images && turf.images.length > 0 ? (
+    turf.images.map((img, index) => (
+      <img
+        key={index}
+        className="w-full h-60 object-cover rounded-lg shadow-md"
+        src={img}
+        alt={`Turf image ${index + 1}`}
+      />
+    ))
+  ) : (
+    <img
+      className="w-full h-60 object-cover rounded-lg shadow-md"
+      src="/fallback-image.jpg"
+      alt="Fallback Turf"
+    />
+  )}
+</div>
+
         </div>
 
-        {/* Date Selection */}
-        <div className="mt-6">
-          <label htmlFor="date" className="block text-lg font-bold mb-2">Select Date:</label>
-          <input
-            type="date"
-            id="date"
-            value={selectedDate}
-            onChange={(e) => setSelectedDate(e.target.value)}
-            className="w-full p-2 border rounded-md shadow-sm focus:ring-2 focus:ring-green-500"
-          />
-        </div>
+     {/* Date Selection */}
+<div className="mt-6">
+  <label htmlFor="date" className="block text-lg font-bold mb-2">Select Date:</label>
+  <input
+    type="date"
+    id="date"
+    value={selectedDate}
+    onChange={(e) => setSelectedDate(e.target.value)}
+    min={new Date().toISOString().split("T")[0]} // Prevent past dates
+    className="w-full p-2 border rounded-md shadow-sm focus:ring-2 focus:ring-green-500"
+  />
+</div>
+
 
         {/* Time Slots */}
         <div className="mt-6">

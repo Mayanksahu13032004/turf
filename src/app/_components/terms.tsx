@@ -2,44 +2,42 @@
 
 const Terms = () => {
   return (
-    <div className="bg-gray-300 h-[50vh] md:h-[100vh] py-16 px-6">
-      <div className="max-w-4xl mx-auto bg-white p-8 shadow-lg rounded-lg">
-        <h2 className="text-4xl font-bold text-center text-gray-800 mb-8 border-b pb-4">
+    <div className="min-h-screen w-full bg-gradient-to-br from-gray-100 to-gray-300 flex items-start justify-center py-20 px-4">
+      <div className="w-full max-w-4xl bg-white p-10 shadow-2xl rounded-2xl border border-gray-200">
+        <h2 className="text-4xl font-extrabold text-center text-gray-800 mb-10 tracking-tight border-b pb-5">
           Terms & Conditions
         </h2>
 
-        <div className="space-y-6 text-gray-700 leading-relaxed">
+        <div className="space-y-10 text-gray-700 leading-relaxed">
           <p className="text-lg">
-            By using our **turf booking system**, you agree to abide by the following terms and conditions.
+            By using our <span className="font-semibold text-black">turf booking system</span>, you agree to abide by the following terms and conditions.
           </p>
 
-          <div className="space-y-4">
-            <h3 className="text-2xl font-semibold text-blue-700">1. Booking Policy</h3>
-            <p className="text-gray-600">
-              Bookings are **confirmed only after successful payment**. Users must check availability before making a reservation.
+          <section>
+            <h3 className="text-2xl font-semibold text-green-700 mb-2">1. Booking Policy</h3>
+            <p className="text-base text-gray-600">
+              Bookings are <span className="font-medium">confirmed only after successful payment</span>. Please check availability before making a reservation.
             </p>
-          </div>
+          </section>
 
-          <div className="space-y-4">
-            <h3 className="text-2xl font-semibold text-blue-700">2. Cancellation & Refund</h3>
-            <p className="text-gray-600">
-              Cancellations are allowed **up to 24 hours before the booking time**. Refunds will be processed within **5-7 business days**.
+          <section>
+            <h3 className="text-2xl font-semibold text-green-700 mb-2">2. Cancellation & Refund</h3>
+            <p className="text-base text-gray-600">
+              Cancellations are allowed <span className="font-medium">up to 24 hours before the booking time</span>. Refunds will be processed within <span className="font-medium">5–7 business days</span>.
             </p>
-          </div>
+          </section>
 
-          <div className="space-y-4">
-            <h3 className="text-2xl font-semibold text-blue-700">3. Code of Conduct</h3>
-            <p className="text-gray-600">
-              Players must adhere to the **turf rules** and ensure **no damage** to the property.
+          <section>
+            <h3 className="text-2xl font-semibold text-green-700 mb-2">3. Code of Conduct</h3>
+            <p className="text-base text-gray-600">
+              Players must follow all <span className="font-medium">turf rules</span> and ensure <span className="font-medium">no damage</span> is caused to the facility.
             </p>
-          </div>
+          </section>
         </div>
 
-        <div className="mt-8 text-center">
-          <p className="text-gray-500 text-sm">
-            Last updated: <span className="font-medium">March 2025</span>
-          </p>
-        </div>
+        <footer className="mt-12 text-center text-sm text-gray-500">
+          Last updated: <span className="font-medium text-gray-700">March 2025</span>
+        </footer>
       </div>
     </div>
   );

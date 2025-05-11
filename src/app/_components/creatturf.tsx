@@ -42,8 +42,13 @@ const TurfForm: React.FC<TurfFormProps> = ({ admin }) => {
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
-      setImages(Array.from(event.target.files));
+      let ev=event.target.files
+      setImages((prevImages) => [...prevImages, ...Array.from(ev)]);
     }
+  };
+
+  const handleRemoveImage = (index: number) => {
+    setImages(images.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -140,7 +145,30 @@ const TurfForm: React.FC<TurfFormProps> = ({ admin }) => {
           onChange={handleImageChange}
           className="p-4 border rounded-lg w-full text-lg placeholder:font-semibold focus:outline-none focus:ring-2 focus:ring-blue-400 hover:border-blue-500 transition col-span-2"
         />
-        
+
+        {/* Image Previews */}
+        <div className="col-span-2 mt-4">
+          <h3 className="font-semibold text-xl">Selected Images</h3>
+          <div className="flex space-x-4">
+            {images.map((image, index) => (
+              <div key={index} className="relative">
+                <img
+                  src={URL.createObjectURL(image)}
+                  alt={image.name}
+                  className="h-24 w-24 object-cover rounded-md"
+                />
+                <button
+                  type="button"
+                  onClick={() => handleRemoveImage(index)}
+                  className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full p-1"
+                >
+                  X
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+
         <button
           type="submit"
           className="bg-gray-700 text-white text-lg font-semibold p-4 rounded-lg w-full col-span-2 hover:bg-gray-400 hover:shadow-lg transition"

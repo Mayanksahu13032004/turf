@@ -2,44 +2,42 @@
 
 const Privacy = () => {
   return (
-    <div className="bg-gray-300 h-[50vh] md:h-[100vh] py-16 px-6">
-      <div className="max-w-4xl mx-auto bg-white p-8 shadow-lg rounded-lg">
-        <h2 className="text-4xl font-bold text-center text-gray-800 mb-8 border-b pb-4">
+    <div className="min-h-screen w-full bg-gradient-to-br from-gray-100 to-gray-300 flex items-start justify-center py-20 px-4">
+      <div className="w-full max-w-4xl bg-white p-10 shadow-2xl rounded-2xl border border-gray-200">
+        <h2 className="text-4xl font-extrabold text-center text-gray-800 mb-10 tracking-tight border-b pb-5">
           Privacy Policy
         </h2>
 
-        <p className="text-lg text-gray-700 leading-relaxed text-center">
-          Your privacy is important to us. This policy outlines how we **collect, use, and protect** your personal information.
+        <p className="text-lg text-gray-700 leading-relaxed text-center max-w-2xl mx-auto">
+          Your privacy is important to us. This policy outlines how we <span className="font-semibold">collect, use, and protect</span> your personal information.
         </p>
 
-        <div className="space-y-6 mt-8 text-gray-700">
-          <div className="space-y-3">
-            <h3 className="text-2xl font-semibold text-blue-700">1. Information Collection</h3>
-            <p className="text-gray-600 leading-relaxed">
-              We collect personal information such as **your name, email, and payment details** when you make a booking.
+        <div className="space-y-10 mt-10 text-gray-700">
+          <section>
+            <h3 className="text-2xl font-semibold text-green-700 mb-2">1. Information Collection</h3>
+            <p className="text-base text-gray-600 leading-relaxed">
+              We collect personal information such as <span className="font-medium">your name, email, and payment details</span> when you make a booking.
             </p>
-          </div>
+          </section>
 
-          <div className="space-y-3">
-            <h3 className="text-2xl font-semibold text-blue-700">2. Data Protection</h3>
-            <p className="text-gray-600 leading-relaxed">
-              Your data is **securely stored** and is **never shared** with third parties without your consent.
+          <section>
+            <h3 className="text-2xl font-semibold text-green-700 mb-2">2. Data Protection</h3>
+            <p className="text-base text-gray-600 leading-relaxed">
+              Your data is <span className="font-medium">securely stored</span> and is <span className="font-medium">never shared</span> with third parties without your consent.
             </p>
-          </div>
+          </section>
 
-          <div className="space-y-3">
-            <h3 className="text-2xl font-semibold text-blue-700">3. Cookies</h3>
-            <p className="text-gray-600 leading-relaxed">
-              We use **cookies** to enhance your browsing experience and improve our services.
+          <section>
+            <h3 className="text-2xl font-semibold text-green-700 mb-2">3. Cookies</h3>
+            <p className="text-base text-gray-600 leading-relaxed">
+              We use <span className="font-medium">cookies</span> to enhance your browsing experience and improve our services.
             </p>
-          </div>
+          </section>
         </div>
 
-        <div className="mt-8 text-center">
-          <p className="text-gray-500 text-sm">
-            Last updated: <span className="font-medium">March 2025</span>
-          </p>
-        </div>
+        <footer className="mt-12 text-center text-sm text-gray-500">
+          Last updated: <span className="font-medium text-gray-700">March 2025</span>
+        </footer>
       </div>
     </div>
   );

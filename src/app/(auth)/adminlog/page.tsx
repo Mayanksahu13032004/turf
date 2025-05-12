@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ToastContainer, toast } from "react-toastify";
@@ -31,23 +31,22 @@ export default function AdminLogin() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
-  
-      // Check if the response is ok (status 200-299)
+
       if (!res.ok) {
         const data = await res.json();
         throw new Error(data.message || "Invalid credentials.");
       }
-  
+
       const data = await res.json();
-  
+
       if (!data.adminId) {
         throw new Error("No admin data found in the response.");
       }
-  
+
       if (!data.adminId.verified) {
         toast.warn("Please verify your email before logging in.");
       } else {
-        localStorage.setItem("user", JSON.stringify(data)); // Store the full response with adminId
+        localStorage.setItem("user", JSON.stringify(data));
         toast.success("Login successful! Redirecting...");
         setTimeout(() => {
           router.push("/admin");
@@ -60,46 +59,44 @@ export default function AdminLogin() {
         toast.error("An unknown error occurred.");
       }
     } finally {
-      setLoading(false); // Reset the loading state after the request is done
-    }};
+      setLoading(false);
+    }
+  };
 
   return (
-    <div
-      className="flex items-center justify-center min-h-screen bg-cover bg-center bg-no-repeat"
-      style={{ backgroundImage: "url('/turf.png')" }}
-    >
+    <div className="min-h-screen bg-cover bg-center bg-no-repeat flex items-center justify-center" style={{ backgroundImage: "url('/turf.png')" }}>
       <ToastContainer position="top-right" autoClose={2000} />
-      <div className="w-full max-w-md p-8 bg-white/20 backdrop-blur-lg rounded-2xl shadow-xl border border-white/40">
-        <h2 className="text-3xl font-bold text-white text-center mb-4">Welcome Back</h2>
+      <div className="w-full max-w-md bg-white/20 backdrop-blur-xl rounded-2xl p-8 shadow-xl border border-white/30">
+        <h2 className="text-3xl font-bold text-white mb-2">Welcome back 👋</h2>
+        <p className="text-white text-sm mb-6">Welcome back! Please enter your details.</p>
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
             type="email"
             name="email"
-            placeholder="Email"
             value={formData.email}
             onChange={handleChange}
-            className="w-full p-3 bg-white/30 text-white border-none rounded-lg focus:ring-2 focus:ring-green-500"
+            placeholder="Enter your email"
+            className="w-full p-3 rounded-lg bg-white text-black placeholder-gray-500 focus:ring-2 focus:ring-green-500 outline-none"
           />
           <input
             type="password"
             name="password"
-            placeholder="Password"
             value={formData.password}
             onChange={handleChange}
-            className="w-full p-3 bg-white/30 text-white border-none rounded-lg focus:ring-2 focus:ring-green-500"
+            placeholder="••••••••"
+            className="w-full p-3 rounded-lg bg-white text-black placeholder-gray-500 focus:ring-2 focus:ring-green-500 outline-none"
           />
-          <div className="flex justify-between text-white text-sm">
-           
+          <div className="flex justify-end text-sm text-white">
             <Link href="/forgot-password" className="hover:underline">
-              Forgot Password?
+              Forgot password?
             </Link>
           </div>
           <button
             type="submit"
             disabled={loading}
-            className="w-full p-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition disabled:opacity-50"
+            className="w-full bg-green-500 hover:bg-green-600 text-white p-3 rounded-lg font-medium transition disabled:opacity-60"
           >
-            {loading ? "Logging in..." : "Sign In"}
+            {loading ? "Signing in..." : "Sign In"}
           </button>
         </form>
       </div>

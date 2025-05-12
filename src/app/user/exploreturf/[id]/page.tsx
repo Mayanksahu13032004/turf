@@ -5,6 +5,10 @@ import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
 import BookTurfButton from "../../../_components/BookTurfButton";
 import { Star } from "lucide-react";
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import { Navigation, Pagination } from 'swiper/modules';
 
 interface Review {
   _id: string;
@@ -185,24 +189,32 @@ export default function Explore() {
             ))}
           </div>
 
-         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+     <Swiper
+  modules={[Navigation, Pagination]}
+  navigation
+  pagination={{ clickable: true }}
+  className="w-full h-[80vh] rounded-xl overflow-hidden shadow-lg"
+>
   {turf.images && turf.images.length > 0 ? (
     turf.images.map((img, index) => (
-      <img
-        key={index}
-        className="w-full h-60 object-cover rounded-lg shadow-md"
-        src={img}
-        alt={`Turf image ${index + 1}`}
-      />
+      <SwiperSlide key={index}>
+        <img
+          src={img}
+          alt={`Turf image ${index + 1}`}
+          className="w-full h-full object-cover"
+        />
+      </SwiperSlide>
     ))
   ) : (
-    <img
-      className="w-full h-60 object-cover rounded-lg shadow-md"
-      src="/fallback-image.jpg"
-      alt="Fallback Turf"
-    />
+    <SwiperSlide>
+      <img
+        src="/fallback-image.jpg"
+        alt="Fallback Turf"
+        className="w-full h-full object-cover"
+      />
+    </SwiperSlide>
   )}
-</div>
+</Swiper>
 
         </div>
 

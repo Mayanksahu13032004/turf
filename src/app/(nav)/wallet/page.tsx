@@ -31,14 +31,17 @@ const WalletPage: React.FC = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [userId, setUserId] = useState<string | null>(null);
   const [userStorage, setUserStorage] = useState<{ user: { _id: string } } | null>(null);
+  const [addAmount, setAddAmount] = useState<number>(0); // New state for dynamic amount
   const router = useRouter();
 
   useEffect(() => {
-    const storedUserId = localStorage.getItem('userId') || '68204f921061df0b2126b042';
-    setUserId(storedUserId);
-
     const storedUser = localStorage.getItem('user');
-    if (storedUser) setUserStorage(JSON.parse(storedUser));
+    if (storedUser) {
+      const parsedUser = JSON.parse(storedUser);
+      const storedUserId = parsedUser.user._id;
+      setUserStorage(parsedUser);
+      setUserId(storedUserId);
+    }
   }, []);
 
   useEffect(() => {
@@ -79,7 +82,16 @@ const WalletPage: React.FC = () => {
             <h2 className="text-xl font-semibold">Wallet Balance</h2>
             <p className="text-3xl font-bold text-green-600">₹{walletBalance}</p>
           </div>
-          <AddMoneyButton userId={userId} amount={500} />
+          <div className="flex items-center gap-4">
+            <input
+              type="number"
+              value={addAmount}
+              onChange={(e) => setAddAmount(Number(e.target.value))}
+              placeholder="Enter amount"
+              className="border rounded px-3 py-1 text-sm"
+            />
+            <AddMoneyButton userId={userId} amount={addAmount} />
+          </div>
         </CardContent>
       </Card>
 
@@ -102,9 +114,7 @@ const WalletPage: React.FC = () => {
                   <TableCell>{tx.type === 'credit' ? 'Credit' : 'Debit'}</TableCell>
                   <TableCell>{tx.description || '-'}</TableCell>
                   <TableCell
-                    className={`text-right ${
-                      tx.type === 'debit' ? 'text-red-600' : 'text-green-600'
-                    }`}
+                    className={`text-right ${tx.type === 'debit' ? 'text-red-600' : 'text-green-600'}`}
                   >
                     ₹{tx.amount.toLocaleString()}
                   </TableCell>

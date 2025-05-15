@@ -1,5 +1,6 @@
 'use client'
-
+import Image from "next/image";
+import vollyball from "../../app/_components/assets/volley.png.jpg"
 const Vlog=()=>{
  return(
  <div className="bg-gray-100 p-6 rounded-lg">
@@ -10,11 +11,18 @@ const Vlog=()=>{
       <div className="flex overflow-x-auto space-x-4 pb-4">
         {/* Blog Card 1 */}
         <div className="min-w-[220px] bg-white rounded-lg shadow-md">
-          <img
-            src="/volley.png.jpg"
-            alt="Volleyball"
-            className="w-full h-32 object-cover rounded-t-lg"
-          />
+         
+
+<Image
+  src={vollyball}
+  alt="Volleyball"
+  className="w-full h-32 object-cover rounded-t-lg"
+/>
+
+
+
+           
+          
           <div className="p-3">
             <h3 className="text-md font-semibold">Learn Volleyball in 5!</h3>
           </div>

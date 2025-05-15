@@ -142,9 +142,18 @@ export default function Explore() {
       paymentStatus: "completed",
       transactionId: "",
     };
+    
+    const orderDatacheck = {
+      date: selectedDate,
+      startTime,
+      endTime,
+     
+    };
+    // Save to localStorage as a string
+localStorage.setItem("orderData", JSON.stringify(orderData));
 
     try {
-      const res = await axios.post(`http://localhost:3000/api/users/exploreturf/${id}`, orderData, {
+      const res = await axios.post(`http://localhost:3000/api/users/exploreturf/${id}/check`, orderDatacheck, {
         headers: { "Content-Type": "application/json" },
       });
 

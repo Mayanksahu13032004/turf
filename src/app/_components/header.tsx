@@ -67,6 +67,7 @@ const Header = () => {
         <Link href="/" className="relative group">Home</Link>
         <Link href="/contact" className="relative group">Contact</Link>
         <Link href="/about" className="relative group">About Us</Link>
+         <Link href="/wallet" className="relative group">wallet</Link>
         <button
           onClick={() => router.push(`/user/allbookings/${userID}`)}
           className="relative group px-4 py-2 text-white bg-green-600 rounded-lg hover:bg-green-700 transition-all"

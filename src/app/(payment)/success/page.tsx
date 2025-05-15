@@ -2,15 +2,18 @@
 
 import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import axios from "axios";
 
 export default function Success() {
   const searchParams = useSearchParams();
   const session_id = searchParams.get("session_id");
 
   const [showConfetti, setShowConfetti] = useState(true);
+  const [userID, setUserID] = useState<string | null>(null);
   const router = useRouter();
 
-  const getUserID = (): string | null => {
+  // ✅ Get userID from localStorage
+  const getUserID = async (): Promise<string | null> => {
     if (typeof window !== "undefined") {
       const userData = localStorage.getItem("user");
       return userData ? JSON.parse(userData).user._id || JSON.parse(userData).user.id : null;
@@ -18,49 +21,68 @@ export default function Success() {
     return null;
   };
 
-  const [userID, setUserID] = useState<string | null>(null);
-
+  // ✅ Fetch userID on mount
   useEffect(() => {
-    setUserID(getUserID());
+    const fetchID = async () => {
+      const id = await getUserID();
+      setUserID(id);
+    };
+    fetchID();
   }, []);
 
+  // ✅ Confetti fade-out
   useEffect(() => {
-    const timer = setTimeout(() => setShowConfetti(false), 3000); // Hide confetti after 3 sec
+    const timer = setTimeout(() => setShowConfetti(false), 3000);
     return () => clearTimeout(timer);
   }, []);
 
+  // ✅ Handle email + API call on success
   useEffect(() => {
-    if (session_id && userID) {
-      const userData = JSON.parse(localStorage.getItem("user") || "{}");
-      const email = userData?.user?.email; // Get email from localStorage
-  
-      if (!email) {
-        console.error("Error: Email is missing");
-        return; // Prevent API call if email is missing
+    const sendData = async () => {
+      if (session_id && userID) {
+        const userData = JSON.parse(localStorage.getItem("user") || "{}");
+        const orderData = JSON.parse(localStorage.getItem("orderData") || "{}");
+        const email = userData?.user?.email;
+        const turf_id = orderData?.turf_id;
+
+        if (!email || !turf_id) {
+          console.error("Email or turf_id missing");
+          return;
+        }
+
+        try {
+          // ✅ 1. Send email
+          const emailRes = await fetch("/api/payment/send-payment-email", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ userID, session_id, email }),
+          });
+
+          const emailData = await emailRes.json().catch(() => ({}));
+          console.log("Email sent:", emailData);
+        } catch (err) {
+          console.error("Email send error:", err);
+        }
+
+        try {
+          // ✅ 2. Store order in backend
+          const turfApiURL = `http://localhost:3000/api/users/exploreturf/${turf_id}`;
+          const postRes = await axios.post(turfApiURL, orderData);
+
+          console.log("Order stored:", postRes.data);
+          // ✅ 3. Clear order data from localStorage
+          localStorage.removeItem("orderData");
+        } catch (error) {
+          console.error("Order store error:", error);
+        }
       }
-  
-      fetch("/api/payment/send-payment-email", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userID, session_id, email }), // Include email
-      })
-        .then(async (res) => {
-          if (!res.ok) {
-            throw new Error(`HTTP error! Status: ${res.status}`);
-          }
-          return res.json().catch(() => ({})); // Ensure valid JSON or empty object
-        })
-        .then((data) => console.log("Email sent:", data))
-        .catch((err) => console.error("Email send error:", err));
-    }
+    };
+
+    sendData();
   }, [session_id, userID]);
-  
-  
-  
 
   return (
     <div className="relative flex items-center justify-center min-h-screen bg-gradient-to-br from-green-100 to-blue-200 p-6">
-      {/* Animated Confetti Background */}
       {showConfetti && (
         <div className="absolute inset-0 bg-[url('/confetti.svg')] bg-cover bg-center animate-fade opacity-30"></div>
       )}
@@ -96,15 +118,3 @@ export default function Success() {
     </div>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-

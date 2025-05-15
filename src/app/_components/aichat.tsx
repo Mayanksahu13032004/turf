@@ -38,7 +38,7 @@ const Chatbot = () => {
         }),
       });
 
-      const data = await res.json(); // ✅ FIXED
+      const data = await res.json(); 
 
       if (res.ok && data?.response) {
         setMessages((prev) => [...prev, { role: "bot", text: data.response }]);

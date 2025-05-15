@@ -8,9 +8,6 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
   apiVersion: "2025-02-24.acacia" as const,
 });
 
-// Dummy user ID for now (replace this with auth logic if available)
-const dummyUserId = "663df32a35d190b6c4eeb4a0"; // Replace with real user ID
-
 function calculateEndTime(startTime: string) {
   const match = startTime.match(/(\d{1,2})(:(\d{2}))?\s?(AM|PM)/i);
   if (!match) return startTime;
@@ -29,9 +26,82 @@ export async function POST(req: Request) {
   try {
     await connectToDatabase();
     const { prompt, price, startTime, endTime, turf_id, user_id } = await req.json();
-    console.log("prompt, price, startTime, endTime, turf_id, user_id", prompt, price, startTime, endTime, turf_id, user_id);
 
     const origin = process.env.NEXT_PUBLIC_BASE_URL;
+
+    // --- Greeting ---
+    if (/^(hi|hello|hey)$/i.test(prompt.trim())) {
+      return NextResponse.json({ response: "👋 Hello! How can I help you with turf bookings today?" });
+    }
+
+// Price based pridiction
+const priceMatch = prompt.match(/price\s*(less|below|under)?\s*(\d+)/i);
+if (priceMatch) {
+  const priceLimit = parseInt(priceMatch[2]);
+
+  // Find turfs with price less than or equal to the given limit
+  const affordableTurfs = await Turf.find({ price: { $lt: priceLimit } });
+
+  if (affordableTurfs.length === 0) {
+    return NextResponse.json({
+      response: `❌ No turfs found below ₹${priceLimit}.`,
+    });
+  }
+
+  return NextResponse.json({
+    response: `✅ Turfs available below ₹${priceLimit}: ${affordableTurfs
+      .map((t) => `${t.name} (₹${t.price})`)
+      .join(", ")}`,
+  });
+}
+
+
+
+    // --- Find turf in a location ---
+    const locationMatch = prompt.match(/turf.+in\s(.+)/i);
+    if (locationMatch) {
+      const location = locationMatch[1].trim();
+      const turfs = await Turf.find({
+        location: { $regex: new RegExp(location, "i") },
+      });
+
+      if (turfs.length === 0) {
+        return NextResponse.json({ response: `❌ No turfs found in ${location}.` });
+      }
+
+      return NextResponse.json({
+        response: `✅ Found turfs in ${location}: ${turfs.map((t) => t.name).join(", ")}`,
+      });
+    }
+
+    // --- Check availability ---
+    const availabilityMatch = prompt.match(/which turfs are available on\s(\d{4}-\d{2}-\d{2})\s+at\s+(\d{1,2}(:\d{2})?\s?(AM|PM))/i);
+    if (availabilityMatch) {
+      const date = availabilityMatch[1];
+      const time = availabilityMatch[2];
+      const turfs = await Turf.find({});
+      const availableTurfs: string[] = [];
+
+      for (const turf of turfs) {
+        const existingOrder = await Order.findOne({
+          turf_id: turf._id,
+          date,
+          startTime: time,
+        });
+
+        if (!existingOrder) {
+          availableTurfs.push(turf.name);
+        }
+      }
+
+      return NextResponse.json({
+        response: availableTurfs.length > 0
+          ? `✅ Available turfs at ${time} on ${date}: ${availableTurfs.join(", ")}`
+          : `❌ No turfs available at ${time} on ${date}.`,
+      });
+    }
+
+    // --- Booking logic ---
     const turfMatch = prompt.match(/book\s(.+?)\s+on/i);
     const dateMatch = prompt.match(/on\s(\d{4}-\d{2}-\d{2})/);
     const timeMatch = prompt.match(/at\s(\d{1,2}(:\d{2})?\s?(AM|PM|am|pm)?)/);
@@ -45,59 +115,54 @@ export async function POST(req: Request) {
         response: "❌ I couldn't understand the turf name, date, or time. Please try again.",
       });
     }
-console.log("chatbot detials",turfName,date,time);
 
     const turf = await Turf.findOne({ name: { $regex: new RegExp(`^${turfName}$`, "i") } });
     if (!turf) {
-      return NextResponse.json({ response: `❌ No turf found with name "${turfName}".` });
+      return NextResponse.json({ response: `❌ No turf found with name \"${turfName}\".` });
     }
 
-    // Convert start and end time to Date objects
     const startDateTime = new Date(`${date}T${startTime}:00`);
     const endDateTime = new Date(`${date}T${endTime}:00`);
 
-    // Check for overlapping bookings (existing bookings that overlap with new one)
-   const existingBooking = await Order.findOne({date });
-if (existingBooking) {
+    const existingBooking = await Order.findOne({ date });
+    if (existingBooking) {
       return NextResponse.json({
         response: `❌ ${turf.name} is already booked on ${date} between ${startTime} and ${endTime}.`,
       });
-    } else {
-      // ✅ If no overlapping booking, proceed with the payment process
-    const session = await stripe.checkout.sessions.create({
-  payment_method_types: ["card"],
-  line_items: [
-    {
-      price_data: {
-        currency: "inr",
-        product_data: {
-          name: "Turf Booking",
-        },
-        unit_amount: price * 100, // ₹1 = 100 paise
-      },
-      quantity: 1,
-    },
-  ],
-  mode: "payment",
-  success_url: `${origin}/success?session_id={CHECKOUT_SESSION_ID}`,
-  cancel_url: `${origin}/cancel`,
-  metadata: {
-    prompt,
-    price: price.toString(), // Stripe metadata values must be strings
-    date,
-    startTime,
-    endTime,
-    turf_id,
-    user_id,
-  },
-});
-
-return NextResponse.json({
-  response: "✅ Slot is available! Redirecting to payment...",
-  checkoutUrl: session.url,
-});
-
     }
+
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      line_items: [
+        {
+          price_data: {
+            currency: "inr",
+            product_data: {
+              name: "Turf Booking",
+            },
+            unit_amount: price * 100,
+          },
+          quantity: 1,
+        },
+      ],
+      mode: "payment",
+      success_url: `${origin}/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${origin}/cancel`,
+      metadata: {
+        prompt,
+        price: price.toString(),
+        date,
+        startTime,
+        endTime,
+        turf_id,
+        user_id,
+      },
+    });
+
+    return NextResponse.json({
+      response: "✅ Slot is available! Redirecting to payment...",
+      checkoutUrl: session.url,
+    });
 
   } catch (err: any) {
     console.error("Booking error:", err.message || err);

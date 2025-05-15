@@ -42,12 +42,10 @@
     "react-toastify": "^11.0.3",
     "stripe": "^17.7.0",
     "swiper": "^11.2.6",
-<<<<<<< HEAD
+
     "uuid": "^11.1.0"
-=======
-    "tailwind-merge": "^3.2.0",
-    "tailwindcss-animate": "^1.0.7"
->>>>>>> your-branch-name
+
+
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

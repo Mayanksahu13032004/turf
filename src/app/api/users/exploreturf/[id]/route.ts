@@ -32,6 +32,12 @@ export async function GET(req: NextRequest, { params }: Params) {
 
 
 
+
+
+
+
+
+
 export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
     try {
         await connectToDatabase();
@@ -48,7 +54,11 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
             return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
         }
 
-
+        // Check if the slot is already booked
+        const existingBooking = await Order.findOne({ turf_id, date, startTime, endTime });
+        if (existingBooking) {
+            return NextResponse.json({ error: "This time slot is already booked. Please select another slot." }, { status: 409 });
+        }
 
         const newOrder = new Order({
             user_id,
@@ -71,18 +81,3 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
         return NextResponse.json({ error: "Internal Server Error", details: error.message }, { status: 500 });
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

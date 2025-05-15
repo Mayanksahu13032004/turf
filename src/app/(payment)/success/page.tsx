@@ -12,7 +12,7 @@ export default function Success() {
   const [userID, setUserID] = useState<string | null>(null);
   const router = useRouter();
 
-  // ✅ Async getUserID function
+  // ✅ Get userID from localStorage
   const getUserID = async (): Promise<string | null> => {
     if (typeof window !== "undefined") {
       const userData = localStorage.getItem("user");
@@ -21,7 +21,7 @@ export default function Success() {
     return null;
   };
 
-  // ✅ Get userID from localStorage on mount
+  // ✅ Fetch userID on mount
   useEffect(() => {
     const fetchID = async () => {
       const id = await getUserID();
@@ -30,45 +30,56 @@ export default function Success() {
     fetchID();
   }, []);
 
-  // ✅ Confetti hide timeout
+  // ✅ Confetti fade-out
   useEffect(() => {
     const timer = setTimeout(() => setShowConfetti(false), 3000);
     return () => clearTimeout(timer);
   }, []);
 
-  // ✅ Handle API call and email sending after payment success
+  // ✅ Handle email + API call on success
   useEffect(() => {
     const sendData = async () => {
       if (session_id && userID) {
         const userData = JSON.parse(localStorage.getItem("user") || "{}");
         const orderData = JSON.parse(localStorage.getItem("orderData") || "{}");
         const email = userData?.user?.email;
+        const turf_id = orderData?.turf_id;
 
-        if (!email) {
-          console.error("Error: Email is missing");
+        if (!email || !turf_id) {
+          console.error("Email or turf_id missing");
           return;
         }
 
-      
-        // ✅ Send payment confirmation email
         try {
+          // ✅ 1. Send email
           const emailRes = await fetch("/api/payment/send-payment-email", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ userID, session_id, email }),
           });
 
-          const data = await emailRes.json().catch(() => ({}));
-          console.log("Email sent:", data);
+          const emailData = await emailRes.json().catch(() => ({}));
+          console.log("Email sent:", emailData);
         } catch (err) {
           console.error("Email send error:", err);
+        }
+
+        try {
+          // ✅ 2. Store order in backend
+          const turfApiURL = `http://localhost:3000/api/users/exploreturf/${turf_id}`;
+          const postRes = await axios.post(turfApiURL, orderData);
+
+          console.log("Order stored:", postRes.data);
+          // ✅ 3. Clear order data from localStorage
+          localStorage.removeItem("orderData");
+        } catch (error) {
+          console.error("Order store error:", error);
         }
       }
     };
 
     sendData();
   }, [session_id, userID]);
-
 
   return (
     <div className="relative flex items-center justify-center min-h-screen bg-gradient-to-br from-green-100 to-blue-200 p-6">

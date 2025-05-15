@@ -1,19 +1,24 @@
-import mongoose, { Schema, Document } from "mongoose";
+// src/app/model/Review.ts
+import mongoose, { Schema, Document, models, model } from "mongoose";
 
-interface IReview extends Document {
-    userId: mongoose.Schema.Types.ObjectId;  // Ensure userId is an ObjectId
-    turfId: mongoose.Schema.Types.ObjectId;
-    comment: string;
-    rating: number;
+export interface IReview extends Document {
+  userId: string;
+  turfId: string;
+  rating: number;
+  comment: string;
 }
 
-const ReviewSchema = new Schema<IReview>({
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }, // Reference to User model
-    turfId: { type: mongoose.Schema.Types.ObjectId, ref: "Turf", required: true }, // Reference to Turf model
+const ReviewSchema = new Schema<IReview>(
+  {
+    userId: { type: String, required: true },
+    turfId: { type: String, required: true },
+    rating: { type: Number, required: true },
     comment: { type: String, required: true },
-    rating: { type: Number, required: true, min: 1, max: 5 }
-});
+  },
+  { timestamps: true }
+);
 
-const Review = mongoose.model<IReview>("Review", ReviewSchema);
+// ✅ Prevent OverwriteModelError
+const Review = models.Review || model<IReview>("Review", ReviewSchema);
 
 export default Review;

@@ -13,6 +13,7 @@ import Notifications from "./_components/notifications";
 import Refer from "./_components/refer";
 import Vlog from "./_components/vlog";
 import Chatbot from "./_components/aichat";
+import ReferralLink from "./_components/refrencelink"
 
 
 // Define Turf type
@@ -231,7 +232,7 @@ console.log("price",price);
 <Vlog/>
 <Chatbot/>
 <AboutUs />
-
+<ReferralLink/>
 <Terms  />
 <Privacy/>
 <Notifications/>

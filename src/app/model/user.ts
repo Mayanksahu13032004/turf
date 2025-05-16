@@ -9,7 +9,8 @@ export interface IUser extends Document {
   resetToken?: string;
   resetTokenExpiry?: Date;
   createdAt: Date;
-  wallet:Number
+  wallet: number;
+  referredBy?: mongoose.Types.ObjectId; // ✅ add this line
 }
 
 const UserSchema: Schema = new Schema(
@@ -19,9 +20,16 @@ const UserSchema: Schema = new Schema(
     password: { type: String, required: true },
     verified: { type: Boolean, default: false },
     verificationToken: { type: String },
-    resetToken: { type: String }, // ✅ added
-    resetTokenExpiry: { type: Date }, // ✅ added
-    wallet: {type: Number,default: 0,},
+    resetToken: { type: String },
+    resetTokenExpiry: { type: Date },
+    wallet: { type: Number, default: 0 },
+
+    // ✅ Add this field to store referral
+    referredBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+    },
   },
   { timestamps: true }
 );

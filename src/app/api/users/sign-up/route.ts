@@ -8,7 +8,7 @@ import { sendVerificationEmail } from "../../../lib/mailer";
 export async function POST(req: NextRequest) {
   try {
     await connectToDatabase();
-    const { name, email, password } = await req.json();
+    const { name, email, password, referredBy } = await req.json(); // ✅ include referrer if sent
 
     if (!name || !email || !password) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
@@ -26,18 +26,44 @@ export async function POST(req: NextRequest) {
     // Generate verification token
     const verificationToken = crypto.randomBytes(32).toString("hex");
 
-    // Create user
+    // Create new user with referral info
     const newUser = new User({
       name,
       email,
       password: hashedPassword,
       verified: false,
       verificationToken,
+      referredBy: referredBy || null, // ✅ store referrer if exists
     });
+
     await newUser.save();
 
-    // Send verification email
-    await sendVerificationEmail(email, verificationToken,"-user");
+    // ✅ Credit ₹10 to the new user's wallet
+    await fetch(`http://localhost:3000/api/wallet/${newUser._id}/add`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        type: "credit",
+        amount: 10,
+        description: "Welcome Bonus for Signing Up 🎉",
+      }),
+    });
+
+    // ✅ Credit ₹50 to referrer if exists
+    if (referredBy) {
+      await fetch(`http://localhost:3000/api/wallet/${referredBy}/add`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: "credit",
+          amount: 50,
+          description: "Referral Reward 🎁",
+        }),
+      });
+    }
+
+    // ✅ Send verification email
+    await sendVerificationEmail(email, verificationToken, "-user");
 
     return NextResponse.json(
       { message: "User registered! Please check your email for verification." },

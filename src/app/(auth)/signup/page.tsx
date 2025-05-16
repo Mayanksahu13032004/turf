@@ -1,7 +1,7 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -12,8 +12,18 @@ export default function SignUp() {
     email: "",
     password: "",
   });
+  const [referredBy, setReferredBy] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // ✅ 1. Capture the ref from the URL on first render
+  useEffect(() => {
+    const ref = searchParams.get("ref");
+    if (ref) {
+      setReferredBy(ref);
+    }
+  }, [searchParams]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -30,10 +40,14 @@ export default function SignUp() {
     }
 
     try {
+      // ✅ 2. Add referredBy if present in body
       const res = await fetch("/api/users/sign-up", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          referredBy: referredBy || undefined,
+        }),
       });
 
       const data = await res.json();

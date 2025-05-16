@@ -13,6 +13,7 @@ import Notifications from "./_components/notifications";
 import Refer from "./_components/refer";
 import Vlog from "./_components/vlog";
 import Chatbot from "./_components/aichat";
+import ChatbotPromptExamples from "./_components/ChatbotPromptExamples";
 
 
 // Define Turf type
@@ -157,7 +158,7 @@ console.log("price",price);
               onChange={(e) => setSearchLocation(e.target.value)}
               className="w-full sm:w-80 p-3 border border-white rounded-lg shadow-sm bg-transparent text-white placeholder:text-gray-400"
             />
-            <input
+            <input  
               type="text"
               placeholder="Search by turf name..."
               value={searchName}
@@ -231,7 +232,7 @@ console.log("price",price);
 <Vlog/>
 <Chatbot/>
 <AboutUs />
-
+<ChatbotPromptExamples/>
 <Terms  />
 <Privacy/>
 <Notifications/>

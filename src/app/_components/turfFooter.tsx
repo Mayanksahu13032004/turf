@@ -9,7 +9,7 @@ export default function TurfFooter() {
         {/* Brand & Description */}
         <div>
           <h2 className="text-2xl font-bold text-blue-600">Turfer</h2>
-          <p className="text-gray-600 mt-3">
+          <p className="text-xl font-semibold text-gray-600 mt-3">
             Book your favorite turfs easily and enjoy seamless gaming experiences.
           </p>
         </div>
@@ -18,20 +18,49 @@ export default function TurfFooter() {
         <div>
           <h3 className="text-lg font-semibold text-gray-900">Quick Links</h3>
           <ul className="mt-3 space-y-2">
-            <li><a href="/" className="text-gray-600 hover:text-blue-600 transition">Home</a></li>
-            <li><a href="/turfs" className="text-gray-600 hover:text-blue-600 transition">Turfs</a></li>
-            <li><a href="/tournaments" className="text-gray-600 hover:text-blue-600 transition">Tournaments</a></li>
-            <li><a href="/offers" className="text-gray-600 hover:text-blue-600 transition">Offers</a></li>
-            <li><a href="/contact" className="text-gray-600 hover:text-blue-600 transition">Contact</a></li>
+            <li>
+              <a href="/" className="text-xl font-semibold text-gray-600 hover:text-blue-600 transition">
+                Home
+              </a>
+            </li>
+            <li>
+              <a href="/turfs" className="text-xl font-semibold text-gray-600 hover:text-blue-600 transition">
+                Turfs
+              </a>
+            </li>
+            <li>
+              <a href="/tournaments" className="text-xl font-semibold text-gray-600 hover:text-blue-600 transition">
+                Tournaments
+              </a>
+            </li>
+            <li>
+              <a href="/offers" className="text-xl font-semibold text-gray-600 hover:text-blue-600 transition">
+                Offers
+              </a>
+            </li>
+            <li>
+              <a href="/contact" className="text-xl font-semibold text-gray-600 hover:text-blue-600 transition">
+                Contact
+              </a>
+            </li>
           </ul>
         </div>
 
         {/* Contact Info & Socials */}
         <div>
           <h3 className="text-lg font-semibold text-gray-900">Contact Us</h3>
-          <p className="flex items-center text-gray-600 mt-3"><MapPin className="w-5 h-5 mr-2 text-blue-600"/> Ahmedabad, Gujarat, India</p>
-          <p className="flex items-center text-gray-600"><Mail className="w-5 h-5 mr-2 text-blue-600"/> support@turfer.com</p>
-          <p className="flex items-center text-gray-600"><Phone className="w-5 h-5 mr-2 text-blue-600"/> +91 98765 43210</p>
+          <p className="flex items-center text-xl font-semibold text-gray-600 mt-3">
+            <MapPin className="w-5 h-5 mr-2 text-blue-600" />
+            Ahmedabad, Gujarat, India
+          </p>
+          <p className="flex items-center text-xl font-semibold text-gray-600">
+            <Mail className="w-5 h-5 mr-2 text-blue-600" />
+            support@turfer.com
+          </p>
+          <p className="flex items-center text-xl font-semibold text-gray-600">
+            <Phone className="w-5 h-5 mr-2 text-blue-600" />
+            +91 98765 43210
+          </p>
 
           {/* Social Icons */}
           <div className="flex space-x-4 mt-4">

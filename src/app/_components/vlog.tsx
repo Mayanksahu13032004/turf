@@ -1,84 +1,49 @@
-'use client'
+'use client';
 import Image from "next/image";
-import vollyball from "../../app/_components/assets/volley.png.jpg"
-const Vlog=()=>{
- return(
- <div className="bg-gray-100 p-6 rounded-lg">
-      {/* Heading */}
-      <h2 className="text-2xl font-bold mb-4">Blogs to Keep You Fit!</h2>
+import vollyball from "../../app/_components/assets/volley.png.jpg";
+import circket from "../../app/_components/assets/circket.jpg";
+import badminto from "../../app/_components/assets/badminton.jpg";
+import golf from "../../app/_components/assets/golf.png";
 
-      {/* Blog Section */}
-      <div className="flex overflow-x-auto space-x-4 pb-4">
-        {/* Blog Card 1 */}
-        <div className="min-w-[220px] bg-white rounded-lg shadow-md">
-         
+const Vlog = () => {
+  const blogs = [
+    { title: "Learn Volleyball in 5!", image: vollyball },
+    { title: "Names Celebrated by Cr...", image: circket },
+    { title: "Easy-to-Learn Badminton...", image: badminto },
+    { title: "A Spectator’s Guide to G...", image: golf },
+  ];
 
-<Image
-  src={vollyball}
-  alt="Volleyball"
-  className="w-full h-32 object-cover rounded-t-lg"
-/>
+  return (
+    <div className="bg-gray-100 p-10 rounded-2xl">
+      <h2 className="text-4xl font-bold mb-8 text-gray-800">
+        Blogs to Keep You Fit!
+      </h2>
 
-
-
-           
-          
-          <div className="p-3">
-            <h3 className="text-md font-semibold">Learn Volleyball in 5!</h3>
+      <div className="flex overflow-x-auto space-x-8 pb-6 scrollbar-thin scrollbar-thumb-gray-400">
+        {blogs.map((blog, idx) => (
+          <div
+            key={idx}
+            className="min-w-[320px] bg-white rounded-2xl shadow-lg hover:shadow-2xl transition duration-300 transform hover:-translate-y-2 hover:scale-105 cursor-pointer"
+          >
+            <div className="relative h-60 overflow-hidden rounded-t-2xl">
+              <Image
+                src={blog.image}
+                alt={blog.title}
+                fill
+                className="object-cover"
+              />
+              <div className="absolute inset-0 bg-black bg-opacity-20 hover:bg-opacity-30 transition duration-300"></div>
+            </div>
+            <div className="p-5">
+              <h3 className="text-2xl font-semibold text-gray-800">
+                {blog.title}
+              </h3>
+            </div>
           </div>
-        </div>
-
-        {/* Blog Card 2 */}
-        <div className="min-w-[220px] bg-white rounded-lg shadow-md">
-          <img
-            src="/images/cricketers.jpg"
-            alt="Cricketers"
-            className="w-full h-32 object-cover rounded-t-lg"
-          />
-          <div className="p-3">
-            <h3 className="text-md font-semibold">Names Celebrated by Cr...</h3>
-          </div>
-        </div>
-
-        {/* Blog Card 3 */}
-        <div className="min-w-[220px] bg-white rounded-lg shadow-md">
-          <img
-            src="/images/badminton.jpg"
-            alt="Badminton"
-            className="w-full h-32 object-cover rounded-t-lg"
-          />
-          <div className="p-3">
-            <h3 className="text-md font-semibold">Easy-to-Learn Badminto...</h3>
-          </div>
-        </div>
-
-        {/* Blog Card 4 */}
-        <div className="min-w-[220px] bg-white rounded-lg shadow-md">
-          <img
-            src="/images/golf.jpg"
-            alt="Golf"
-            className="w-full h-32 object-cover rounded-t-lg"
-          />
-          <div className="p-3">
-            <h3 className="text-md font-semibold">A Spectator’s Guide to G...</h3>
-          </div>
-        </div>
-
-        {/* QR Download Box */}
-        <div className="min-w-[220px] bg-gradient-to-br from-gray-800 to-gray-600 text-white rounded-lg p-4 flex flex-col items-center justify-center">
-          <img
-            src="/images/qr-code.png"
-            alt="QR Code"
-            className="w-20 h-20 mb-2"
-          />
-          <p className="font-semibold text-sm text-center">
-            DOWNLOAD
-            <br />
-            THE APP
-          </p>
-        </div>
+        ))}
       </div>
     </div>
-    )
-}
+  );
+};
+
 export default Vlog;

@@ -10,24 +10,30 @@ const notifications = [
 
 const Notifications = () => {
   return (
-    <div className="h-[50vh] md:h-[100vh] bg-gray-100 py-16 px-6">
-      <div className="max-w-3xl mx-auto bg-white p-8 shadow-lg rounded-xl">
-        <div className="flex items-center justify-center mb-8">
-          <Bell className="h-8 w-8 text-blue-600" />
-          <h2 className="text-3xl font-semibold text-gray-800 ml-3">Notifications</h2>
+    <div className="min-h-screen w-full bg-gradient-to-b from-gray-300 to-gray-100 py-20 px-4">
+      <div className="w-full bg-gradient-to-b from-gray-300 to-gray-100 p-10 shadow-2xl border border-gray-200">
+        <div className="flex items-center justify-center mb-10 border-b pb-5">
+          <Bell className="h-10 w-10 text-green-700" />
+          <h2 className="text-4xl font-extrabold text-gray-800 ml-4 tracking-tight">
+            Notifications
+          </h2>
         </div>
 
-        <div className="divide-y divide-gray-300">
+        <div className="space-y-6">
           {notifications.map((notif, index) => (
             <div
               key={index}
-              className="p-5 flex flex-col bg-gray-50 hover:bg-blue-50 transition-all rounded-xl shadow-md mb-4"
+              className="bg-gray-50 hover:bg-blue-50 transition-all p-6 rounded-xl shadow-md"
             >
-              <p className="text-gray-800 text-lg font-medium">{notif.message}</p>
-              <span className="text-sm text-gray-600">{notif.time}</span>
+              <p className="text-2xl font-bold text-gray-900">{notif.message}</p>
+              <span className="text-lg text-gray-600">{notif.time}</span>
             </div>
           ))}
         </div>
+
+        <footer className="mt-12 text-center text-sm text-gray-500">
+          Last updated: <span className="font-bold text-gray-700 text-2xl">March 2025</span>
+        </footer>
       </div>
     </div>
   );

@@ -6,9 +6,12 @@ import { useRouter } from "next/navigation";
 import { Menu, X } from "lucide-react";
 
 interface User {
-  name: string;
+  // name: string;
   email: string;
   token: string;
+   user: {
+    name: string;
+   }
 }
 
 const Header = () => {
@@ -55,69 +58,102 @@ const Header = () => {
     }
   };
 
+  const navLinkClass =
+    "relative px-3 py-2 transition-all duration-200 text-xl text-white hover:text-yellow-300 font-medium after:absolute after:left-0 after:bottom-0 after:h-[2px] after:w-0 after:bg-yellow-300 after:transition-all after:duration-300 hover:after:w-full";
+
   return (
-    <header className="flex items-center justify-between p-5 bg-green-700 text-white shadow-lg">
+    <header className="flex items-center justify-between px-6 py-4 bg-green-700 shadow-lg">
       <div className="flex items-center space-x-3">
-        <img src="/logo.png" alt="TurfMate Logo" className="h-12 w-auto" />
-        <div className="text-2xl font-bold">TurfMate</div>
+        <img src="/logo.png" alt="TurfMate Logo" className="h-10 w-auto" />
+        <span className="text-2xl font-bold text-white tracking-wide">TurfMate</span>
       </div>
 
-      {/* Navigation for larger screens */}
-      <nav className="hidden md:flex space-x-6 text-lg">
-        <Link href="/" className="relative group">Home</Link>
-        <Link href="/contact" className="relative group">Contact</Link>
-        <Link href="/about" className="relative group">About Us</Link>
-         <Link href="/wallet" className="relative group">wallet</Link>
+      {/* Desktop Navigation */}
+      <nav className="hidden md:flex space-x-6 items-center">
+        <Link href="/" className={navLinkClass}>Home</Link>
+        <Link href="/contact" className={navLinkClass}>Contact</Link>
+        <Link href="/about" className={navLinkClass}>About Us</Link>
+        <Link href="/wallet" className={navLinkClass}>Wallet</Link>
         <button
           onClick={() => router.push(`/user/allbookings/${userID}`)}
-          className="relative group px-4 py-2 text-white bg-green-600 rounded-lg hover:bg-green-700 transition-all"
+          className="px-4 py-2 bg-white text-green-700 rounded-md font-semibold hover:bg-yellow-300 hover:text-black transition-all"
         >
           All Bookings
         </button>
       </nav>
 
-      {/* Authentication buttons for larger screens */}
-      <div className="hidden md:flex items-center space-x-6">
-        {userStorage ? (
-          <button onClick={handleLogout} className="px-4 py-2 bg-red-500 rounded-lg hover:bg-red-600">Logout</button>
-        ) : (
-          <>
-            <Link href="/login" className="hover:underline self-center">Log In</Link>
-            <Link href="/signup" className="px-4 py-2 bg-white text-green-600 rounded-lg hover:bg-gray-200">Sign Up</Link>
-          </>
-        )}
-      </div>
+      {/* Authentication Buttons */}
+   <div className="hidden md:flex items-center space-x-4">
+  {userStorage ? (
+    <>
+      <span className="text-2xl text-white font-bold">Hi, {userStorage.user?.name}</span>
+      <button
+        onClick={handleLogout}
+        className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-all"
+      >
+        Logout
+      </button>
+    </>
+  ) : (
+    <>
+      <Link href="/login" className="text-white hover:underline font-medium">Log In</Link>
+      <Link
+        href="/signup"
+        className="px-4 py-2 bg-white text-green-700 font-semibold rounded-md hover:bg-yellow-300 hover:text-black transition-all"
+      >
+        Sign Up
+      </Link>
+    </>
+  )}
+</div>
 
-      {/* Hamburger menu for mobile screens */}
-      <div className="md:hidden flex items-center">
-        <button
-          className="text-white text-2xl"
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-        >
-          {isMenuOpen ? <X /> : <Menu />}
+
+      {/* Hamburger Menu */}
+      <div className="md:hidden">
+        <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-white">
+          {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
         </button>
       </div>
 
-      {/* Mobile menu */}
+      {/* Mobile Navigation */}
       {isMenuOpen && (
-        <div className="md:hidden absolute top-16 left-0 w-full bg-green-700 text-white p-5 space-y-4 z-10">
-          <Link href="/" className="block">Home</Link>
-          <Link href="/contact" className="block">Contact</Link>
-          <Link href="/about" className="block">About Us</Link>
+        <div className="md:hidden absolute top-16 left-0 w-full bg-green-700 text-white px-6 py-4 space-y-4 z-50 shadow-xl">
+          <Link href="/" className="block text-2xl  hover:text-yellow-300">Home</Link>
+          <Link href="/contact" className="block font-medium hover:text-yellow-300">Contact</Link>
+          <Link href="/about" className="block font-medium hover:text-yellow-300">About Us</Link>
+          <Link href="/wallet" className="bloc  k font-medium hover:text-yellow-300">Wallet</Link>
           <button
-            onClick={() => router.push(`/user/allbookings/${userID}`)}
-            className="block px-4 py-2 text-white bg-green-600 rounded-lg hover:bg-green-700 transition-all"
+            onClick={() => {  
+              setIsMenuOpen(false);
+              router.push(`/user/allbookings/${userID}`);
+            }}
+            className=" text-left font-medium px-4 py-2 bg-white text-green-700 rounded-md  hover:text-black transition-all"
           >
             All Bookings
           </button>
-          {userStorage ? (
-            <button onClick={handleLogout} className="block px-4 py-2 bg-red-500 rounded-lg hover:bg-red-600">Logout</button>
-          ) : (
-            <>
-              <Link href="/login" className="block text-center hover:underline">Log In</Link>
-              <Link href="/signup" className="block px-4 py-2 bg-white text-green-600 rounded-lg hover:bg-gray-200">Sign Up</Link>
-            </>
-          )}
+          
+         {userStorage ? (
+  <>
+    <div className="text-2xl text-white font-bold">Hi, {userStorage.user?.name}</div>
+    <button
+      onClick={handleLogout}
+      className="block w-full text-left font-medium px-4 py-2 bg-red-500 rounded-md hover:bg-red-600 transition-all"
+    >
+      Logout
+    </button>
+  </>
+) : (
+  <>
+    <Link href="/login" className="block font-medium hover:underline">Log In</Link>
+    <Link
+      href="/signup"
+      className="block font-medium px-4 py-2 bg-white text-green-700 rounded-md hover:bg-yellow-300 hover:text-black transition-all"
+    >
+      Sign Up
+    </Link>
+  </>
+)}
+
         </div>
       )}
     </header>

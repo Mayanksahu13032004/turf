@@ -13,6 +13,7 @@ import { Navigation, Pagination } from 'swiper/modules';
 interface Review {
   _id: string;
   userId: string;
+  name:string;
   rating: number;
   comment: string;
 }
@@ -38,7 +39,7 @@ export default function Explore() {
   const [turf, setTurf] = useState<Turf | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [userStorage, setUserStorage] = useState<{ user: { _id: string } } | null>(null);
+  const [userStorage, setUserStorage] = useState<{ user: { _id: string, name:string } } | null>(null);
 
   const [selectedDate, setSelectedDate] = useState("");
   const [time, setTime] = useState("");
@@ -74,7 +75,7 @@ export default function Explore() {
       }
     };
 
-    const storedUser = localStorage.getItem("user");
+    const storedUser = localStorage.getItem("user")|| "{}";
     if (storedUser) setUserStorage(JSON.parse(storedUser));
 
     fetchTurf();
@@ -88,17 +89,18 @@ export default function Explore() {
         return;
       }
   
-      if (!userStorage?.user?._id) {
+      if (!userStorage?.user?._id ) {
         alert("Please log in to submit a review.");
         return;
       }
   
-      const reviewData = {
-        userId: userStorage.user._id,
-        turf_id: id,
-        rating,
-        comment,
-      };
+     const reviewData = {
+  userId: userStorage.user._id,
+  rating,
+  comment, // ✅ now included
+  name: userStorage.user.name || "Anonymous", // This is extra; backend doesn't handle it now
+};
+
   
       const result = await axios.post(`http://localhost:3000/api/users/review/${id}`, reviewData);
   
@@ -265,64 +267,89 @@ localStorage.setItem("orderData", JSON.stringify(orderData));
     </div>
    
         {/* Submit Review */}
-        <div className="mt-10 border-t pt-6">
-          <h2 className="text-lg font-bold mb-2">Submit a Review</h2>
+ <div className="mt-10 border-t text-center pt-6 w-full max-w-2xl bg-white p-6 rounded-lg shadow-md">
+  <h2 className="text-2xl font-bold mb-4">Comments and Reviews</h2>
 
-          <div className="flex items-center mb-2">
+  <div className="flex items-center gap-2 mb-4">
+    <div className="w-10 text-2xl font-bold h-10 bg-pink-500 text-white flex items-center justify-center rounded-full ">
+      {userStorage?.user?.name?.charAt(0) || "U"}
+    </div>
+    <div>
+      <p className="text-2xl font-bold">{userStorage?.user?.name || "Anonymous User"}</p>
+      <p className="text-xl font-semibold text-gray-500">Posting publicly</p>
+    </div>
+  </div>
+
+  {/* Stars */}
+  <div className="flex items-center justify-start mb-4">
+    {[1, 2, 3, 4, 5].map((star) => (
+      <Star
+        key={star}
+        className={`w-7 h-7 cursor-pointer ${
+          (hoverRating || rating) >= star ? "text-yellow-400" : "text-gray-300"
+        }`}
+        onMouseEnter={() => setHoverRating(star)}
+        onMouseLeave={() => setHoverRating(0)}
+        onClick={() => setRating(star)}
+      />
+    ))}
+  </div>
+
+  {/* Comment Input */}
+  <textarea
+    className="w-full border-b-2 text-xl font-semibold border-gray-300 focus:outline-none focus:border-blue-600 p-2 mb-4 resize-none"
+    rows={3}
+    placeholder="Exceptional"
+    value={comment}
+    onChange={(e) => setComment(e.target.value)}
+  />
+
+  
+
+  {/* Action Buttons */}
+  <div className="flex justify-end gap-3">
+    <button className="px-4 text-xl font-semibold py-2 border border-gray-400 rounded-md text-gray-600 hover:bg-gray-100">
+      Cancel
+    </button>
+    <button
+      onClick={handleReviewSubmit}
+      className="px-5 py-2 text-xl font-semibold bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+    >
+      Post
+    </button>
+  </div>
+</div>
+
+
+
+        {/* Display Reviews */}
+      <div className="mt-10">
+  <h2 className="text-2xl font-bold mb-6 border-b pb-2 text-gray-800">All Reviews</h2>
+  {reviews.length === 0 ? (
+    <p className="text-gray-500 text-lg">No reviews yet.</p>
+  ) : (
+    <div className="space-y-6">
+      {reviews.map((review) => (
+        <div key={review._id} className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+          <div className="flex items-center gap-3 mb-2">
             {[1, 2, 3, 4, 5].map((star) => (
               <Star
                 key={star}
-                className={`w-6 h-6 cursor-pointer transition-colors ${
-                  (hoverRating || rating) >= star ? "text-yellow-400" : "text-gray-300"
-                }`}
-                onMouseEnter={() => setHoverRating(star)}
-                onMouseLeave={() => setHoverRating(0)}
-                onClick={() => setRating(star)}
+                className={`w-5 h-5 ${star <= review.rating ? "text-yellow-500" : "text-gray-300"}`}
               />
             ))}
-            <span className="ml-2 text-sm text-gray-600">{rating} / 5</span>
-          </div>
-
-          <input
-            type="text"
-            placeholder="Enter comment"
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
-            className="w-full p-2 border rounded-md mb-2"
-          />
-
-          <button
-            onClick={handleReviewSubmit}
-            className="px-4 py-2 bg-blue-500 text-white rounded-md shadow-md"
-          >
-            Submit Review
-          </button>
-        </div>
-
-        {/* Display Reviews */}
-        <div className="mt-10">
-          <h2 className="text-xl font-bold mb-4 border-b pb-2">All Reviews</h2>
-          {reviews.length === 0 ? (
-            <p className="text-gray-500">No reviews yet.</p>
-          ) : (
-            <div className="space-y-4">
-              {reviews.map((review) => (
-                <div key={review._id} className="bg-gray-100 p-4 rounded-md shadow-sm">
-                  <div className="flex items-center gap-2 mb-1">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <Star
-                        key={star}
-                        className={`w-4 h-4 ${star <= review.rating ? "text-yellow-400" : "text-gray-300"}`}
-                      />
-                    ))}
-                    <span className="ml-2 text-sm text-gray-600">({review.rating})</span>
-                  </div>
-                  <p className="text-gray-700">{review.comment}</p>
-                </div>
-              ))}
+            <div className="flex-1">
+              <h1 className="text-lg font-semibold text-gray-800">By: {userStorage?.user?.name}</h1>
             </div>
-          )}
+            <span className="ml-2 text-sm text-gray-600">({review.rating})</span>
+          </div>
+          <p className="text-gray-700 text-base">{review.comment}</p>
         </div>
+      ))}
+    </div>
+  )}
+</div>
+
     </>
   );
 }

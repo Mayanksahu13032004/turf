@@ -12,6 +12,7 @@ interface ITurfForm {
   size: string;
   surfaceType: string;
   amenities: string;
+  game:string;
   availability: { day: string; startTime: string; endTime: string }[];
   createdBy: string;
   images: File[];
@@ -29,6 +30,7 @@ const TurfForm: React.FC<TurfFormProps> = ({ admin }) => {
     pricePerHour: 0,
     size: "",
     surfaceType: "",
+    game: "",
     amenities: "",
     availability: [{ day: "", startTime: "", endTime: "" }],
     createdBy: admin,
@@ -61,6 +63,7 @@ const TurfForm: React.FC<TurfFormProps> = ({ admin }) => {
       data.append("size", formData.size);
       data.append("surfaceType", formData.surfaceType);
       data.append("amenities", formData.amenities);
+      data.append("game", formData.game);
       data.append("createdBy", formData.createdBy);
 
       formData.availability.forEach((item, index) => {
@@ -80,7 +83,8 @@ const TurfForm: React.FC<TurfFormProps> = ({ admin }) => {
       );
 
       toast.success("Turf added successfully!");
-      console.log("Response:", response.data);
+      console.log("Response of created turf:", response.data);
+      console.log("Response: of game name", response.data.game);
     } catch (error) {
       toast.error("Failed to add turf.");
       console.error("Error:", error);
@@ -114,6 +118,13 @@ const TurfForm: React.FC<TurfFormProps> = ({ admin }) => {
           name="pricePerHour"
           type="number"
           placeholder="Price Per Hour"
+          onChange={handleChange}
+          className="p-4 border rounded-lg w-full text-lg placeholder:font-semibold focus:outline-none focus:ring-2 focus:ring-blue-400 hover:border-blue-500 transition"
+        />
+         <input
+          name="game"
+          type="text"
+          placeholder="Enter Game"
           onChange={handleChange}
           className="p-4 border rounded-lg w-full text-lg placeholder:font-semibold focus:outline-none focus:ring-2 focus:ring-blue-400 hover:border-blue-500 transition"
         />

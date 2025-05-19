@@ -41,7 +41,7 @@
     const [order, setOrder] = useState<IOrder[]>([]);
     const router = useRouter();
     const storedAdminId = localStorage.getItem("adminId");
-
+      
     useEffect(() => {
       if (!storedAdminId) {
         toast.error("Unauthorized! Redirecting to login...");

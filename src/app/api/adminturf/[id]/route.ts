@@ -29,6 +29,7 @@ export async function POST(req: NextRequest, { params }: Params) {
     const size = formData.get("size") as string | null;
     const surfaceType = formData.get("surfaceType") as string | null;
     const amenities = formData.getAll("amenities").map(String);
+    const game = formData.getAll("game").map(String);
 
     const adminId = params.id;
     if (!mongoose.Types.ObjectId.isValid(adminId)) {
@@ -36,8 +37,8 @@ export async function POST(req: NextRequest, { params }: Params) {
     }
 
     // Validate required fields
-    if (!name || !location || !pricePerHour || !size || !surfaceType) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    if (!name || !location || !pricePerHour || !size || !game ||!surfaceType || !amenities)  {
+      return NextResponse.json({ error: "Missing fields are required" }, { status: 400 });
     }
 
     // Parse availability
@@ -82,6 +83,7 @@ export async function POST(req: NextRequest, { params }: Params) {
       pricePerHour,
       size,
       surfaceType,
+      game,
       amenities,
       availability: availabilityArray,
       createdBy: new mongoose.Types.ObjectId(adminId),

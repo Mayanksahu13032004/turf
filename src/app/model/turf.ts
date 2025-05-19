@@ -7,6 +7,7 @@ export interface ITurf extends Document {
     dynamicPricePerHour: number, // Dynamic Price
     size: string;
     surfaceType: string;
+    game:string[];
     amenities: string[];
     availability: { day: string; startTime: string; endTime: string }[];
     createdBy: Types.ObjectId; // Admin who created the turf
@@ -20,6 +21,7 @@ const TurfSchema = new Schema<ITurf>(
         name: { type: String, required: true, unique: true },
         location: { type: String, required: true, index: true }, // Indexed for better search performance
         pricePerHour: { type: Number, required: true },
+        game: { type: [String], required: true },
         dynamicPricePerHour: { type: Number, default: null }, // Dynamic Price
         size: { type: String, required: true },
         surfaceType: { type: String, required: true },

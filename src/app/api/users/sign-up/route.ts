@@ -8,7 +8,7 @@ import { sendVerificationEmail } from "../../../lib/mailer";
 export async function POST(req: NextRequest) {
   try {
     await connectToDatabase();
-    const { name, email, password, referredBy } = await req.json(); // ✅ include referrer if sent
+    const { name, email, password, referredBy } = await req.json();
 
     if (!name || !email || !password) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
@@ -33,33 +33,44 @@ export async function POST(req: NextRequest) {
       password: hashedPassword,
       verified: false,
       verificationToken,
-      referredBy: referredBy || null, // ✅ store referrer if exists
+      referredBy: referredBy || null,
     });
 
     await newUser.save();
 
-    // ✅ Credit ₹10 to the new user's wallet
-    await fetch(`http://localhost:3000/api/wallet/${newUser._id}/add`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        type: "credit",
-        amount: 10,
-        description: "Welcome Bonus for Signing Up 🎉",
-      }),
-    });
+    // ✅ Dynamic Base URL for Vercel vs Local Development
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
-    // ✅ Credit ₹50 to referrer if exists
-    if (referredBy) {
-      await fetch(`http://localhost:3000/api/wallet/${referredBy}/add`, {
+    // ✅ Credit ₹10 to the new user's wallet
+    try {
+      await fetch(`${baseUrl}/api/wallet/${newUser._id}/add`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           type: "credit",
-          amount: 50,
-          description: "Referral Reward 🎁",
+          amount: 10,
+          description: "Welcome Bonus for Signing Up 🎉",
         }),
       });
+    } catch (walletErr) {
+      console.error("⚠️ New user wallet credit failed:", walletErr);
+    }
+
+    // ✅ Credit ₹50 to referrer if exists
+    if (referredBy) {
+      try {
+        await fetch(`${baseUrl}/api/wallet/${referredBy}/add`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            type: "credit",
+            amount: 50,
+            description: "Referral Reward 🎁",
+          }),
+        });
+      } catch (refErr) {
+        console.error("⚠️ Referrer wallet credit failed:", refErr);
+      }
     }
 
     // ✅ Send verification email

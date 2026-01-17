@@ -35,32 +35,36 @@
   }
 
   const AdminDashboard: React.FC = () => {
-    const [activeTab, setActiveTab] = useState("dashboard");
-    const [adm, setAdm] = useState("");
-    const [turf, setTurf] = useState<ITurf[]>([]);
-    const [order, setOrder] = useState<IOrder[]>([]);
-    const router = useRouter();
+
+  const [activeTab, setActiveTab] = useState("dashboard");
+  const [adm, setAdm] = useState("");
+  const [turf, setTurf] = useState<ITurf[]>([]);
+  const [order, setOrder] = useState<IOrder[]>([]);
+  const router = useRouter();
+
+  useEffect(() => {
+    // ✅ Access localStorage ONLY inside useEffect
     const storedAdminId = localStorage.getItem("adminId");
-      
-    useEffect(() => {
-      if (!storedAdminId) {
-        toast.error("Unauthorized! Redirecting to login...");
-        setTimeout(() => {
-          router.push("/admin-login");
-        }, 2000);
-      } else {
-        setAdm(storedAdminId);
-        console.log("Admin ID:", storedAdminId);
-      }
-    }, [router]);
+    
+    if (!storedAdminId) {
+      toast.error("Unauthorized! Redirecting to login...");
+      setTimeout(() => {
+        router.push("/admin-login");
+      }, 2000);
+    } else {
+      setAdm(storedAdminId);
+      console.log("Admin ID set:", storedAdminId);
+    }
+  }, [router]);
 
-    useEffect(() => {
-      if (adm) {
-        fetchTurf();
-        orderuser();
-      }
-    }, [adm]);
-
+  // ✅ Trigger data fetching only after adm state is set from localStorage
+  useEffect(() => {
+    if (adm) {
+      fetchTurf();
+      orderuser();
+    }
+  }, [adm]);
+  
     const orderuser = async () => {
       try {
         if (!adm) {
@@ -127,10 +131,11 @@
         toast.error(error.response?.data?.message || "Failed to delete turf.");
       }
     };
-    const handleUpdateClick = (turfData: ITurf) => {
-      localStorage.setItem("turfToUpdate", JSON.stringify(turfData)); // Save turf data
-      router.push(`/update?turfId=${turfData._id}`); // Navigate to update page
-    };
+   const handleUpdateClick = (turfData: ITurf) => {
+    // ✅ Safe to use here because it's triggered by a user click in the browser
+    localStorage.setItem("turfToUpdate", JSON.stringify(turfData)); 
+    router.push(`/update?turfId=${turfData._id}`); 
+  };
     
     
 

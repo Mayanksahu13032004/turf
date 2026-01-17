@@ -1,12 +1,13 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import Link from "next/link";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-export default function SignUp() {
+// 1. This component contains all your logic but uses searchParams
+function SignUpForm() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -17,7 +18,7 @@ export default function SignUp() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // ✅ 1. Capture the ref from the URL on first render
+  // Capture the ref from the URL on first render
   useEffect(() => {
     const ref = searchParams.get("ref");
     if (ref) {
@@ -40,7 +41,6 @@ export default function SignUp() {
     }
 
     try {
-      // ✅ 2. Add referredBy if present in body
       const res = await fetch("/api/users/sign-up", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -117,5 +117,18 @@ export default function SignUp() {
         </form>
       </div>
     </div>
+  );
+}
+
+// 2. This is the main exported component that Next.js sees
+export default function SignUp() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-screen bg-black text-white">
+        Loading...
+      </div>
+    }>
+      <SignUpForm />
+    </Suspense>
   );
 }

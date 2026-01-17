@@ -11,7 +11,7 @@ export default function VerifyEmail() {
 
   useEffect(() => {
     if (!token) {
-      setMessage("Invalid or missing verification token.");
+      setMessage("please check your Gmail. link is sended to your gmail account");
       return;
     }
 

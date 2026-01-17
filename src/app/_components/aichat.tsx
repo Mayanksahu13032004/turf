@@ -34,9 +34,7 @@ const Chatbot = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           prompt: input,
-          price: 1000,
-          turf_id: "67b7f62ea24caca8b05d2edd",
-          user_id: "681f65f22a05b68a6894d3b4",
+         
         }),
       });
 

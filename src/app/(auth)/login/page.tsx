@@ -42,7 +42,14 @@ export default function Login() {
           toast.success("Login successful! Redirecting...");
           setTimeout(() => {
             router.push("/");
+             setTimeout(() => {
+            window.location.reload();
+
+            
           }, 2000);
+
+
+          }, 3000);
         }
       } else {
         throw new Error(data.error || "Invalid credentials.");

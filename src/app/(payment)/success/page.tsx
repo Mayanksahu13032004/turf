@@ -10,9 +10,11 @@ export default function Success() {
 
   const [showConfetti, setShowConfetti] = useState(true);
   const [userID, setUserID] = useState<string | null>(null);
+  const [orderData, setOrderData] = useState<any>(null);
+  const [alreadySent, setAlreadySent] = useState(false);
+
   const router = useRouter();
 
-  // ✅ Get userID from localStorage
   const getUserID = async (): Promise<string | null> => {
     if (typeof window !== "undefined") {
       const userData = localStorage.getItem("user");
@@ -21,7 +23,6 @@ export default function Success() {
     return null;
   };
 
-  // ✅ Fetch userID on mount
   useEffect(() => {
     const fetchID = async () => {
       const id = await getUserID();
@@ -30,56 +31,111 @@ export default function Success() {
     fetchID();
   }, []);
 
-  // ✅ Confetti fade-out
   useEffect(() => {
     const timer = setTimeout(() => setShowConfetti(false), 3000);
     return () => clearTimeout(timer);
   }, []);
 
-  // ✅ Handle email + API call on success
   useEffect(() => {
     const sendData = async () => {
-      if (session_id && userID) {
-        const userData = JSON.parse(localStorage.getItem("user") || "{}");
-        const orderData = JSON.parse(localStorage.getItem("orderData") || "{}");
-        const email = userData?.user?.email;
-        const turf_id = orderData?.turf_id;
+      if (!session_id || !userID || alreadySent) return;
 
-        if (!email || !turf_id) {
-          console.error("Email or turf_id missing");
+      const userData = JSON.parse(localStorage.getItem("user") || "{}");
+      let orderData = JSON.parse(localStorage.getItem("orderData") || "null");
+      const email = userData?.user?.email;
+
+      if (!orderData && session_id) {
+        try {
+          const stripeRes = await fetch(`/api/payment/stripe-session/${session_id}`);
+          if (!stripeRes.ok) {
+            console.error("⚠️ Stripe fetch failed:", await stripeRes.text());
+            return;
+          }
+
+          const data = await stripeRes.json();
+          const meta = data?.session?.metadata;
+          const user = JSON.parse(localStorage.getItem("user") || "{}");
+const userId = user?.user?._id || null;
+
+
+          if (meta) {
+            orderData = {
+              user_id: userId,
+              turf_id: meta.turf_id,
+              date: meta.date,
+              startTime: meta.startTime || meta.start_time,
+              endTime: meta.endTime || meta.end_time,
+              price: Number(meta.price),
+              paymentStatus: "completed",
+              transactionId: session_id,
+            };
+          }
+        } catch (err) {
+          console.error("💥 Failed to fetch Stripe metadata:", err);
           return;
         }
+      }
 
-        try {
-          // ✅ 1. Send email
-          const emailRes = await fetch("/api/payment/send-payment-email", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ userID, session_id, email }),
-          });
+      if (!orderData || !email || !orderData.turf_id) {
+        console.error("❌ Missing required order data", { email, orderData });
+        return;
+      }
 
-          const emailData = await emailRes.json().catch(() => ({}));
-          console.log("Email sent:", emailData);
-        } catch (err) {
-          console.error("Email send error:", err);
-        }
+      setOrderData(orderData);
 
-        try {
-          // ✅ 2. Store order in backend
-          const turfApiURL = `http://localhost:3000/api/users/exploreturf/${turf_id}`;
-          const postRes = await axios.post(turfApiURL, orderData);
+      try {
+        const emailRes = await fetch("/api/payment/send-payment-email", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userID, session_id, email }),
+        });
 
-          console.log("Order stored:", postRes.data);
-          // ✅ 3. Clear order data from localStorage
+        const emailData = await emailRes.json().catch(() => ({}));
+        console.log("📧 Email sent:", emailData);
+      } catch (err) {
+        console.error("Email send error:", err);
+      }
+
+      try {
+        const turfApiURL = `/api/users/exploreturf/${orderData.turf_id}`;
+        console.log("📤 Final Order Data Being Sent:", JSON.stringify(orderData, null, 2));
+
+        const postRes = await axios.post(turfApiURL, orderData);
+
+        if (postRes.status === 200 || postRes.status === 201) {
+          console.log("✅ Order stored:", postRes.data);
           localStorage.removeItem("orderData");
-        } catch (error) {
-          console.error("Order store error:", error);
+          setAlreadySent(true);
+        } else {
+          console.warn("⚠️ Order save failed:", postRes.status);
+        }
+      } catch (err: any) {
+        if (axios.isAxiosError(err)) {
+          const status = err.response?.status;
+          const data = err.response?.data;
+
+          console.error("❌ Axios error:");
+          console.log("Message:", err.message);
+          console.log("Status:", status);
+          console.log("Data:", data);
+
+          if (status === 409) {
+            alert(data?.error || "This slot is already booked. Please choose another.");
+          }
+        } else {
+          console.error("❌ Unknown error:", err);
         }
       }
     };
 
     sendData();
-  }, [session_id, userID]);
+  }, [session_id, userID, alreadySent]);
+
+  useEffect(() => {
+    if (orderData) {
+      console.log("✅ Order Details:", orderData);
+    }
+  }, [orderData]);
 
   return (
     <div className="relative flex items-center justify-center min-h-screen bg-gradient-to-br from-green-100 to-blue-200 p-6">

@@ -231,6 +231,7 @@ export default function Home() {
 
                 {/* ⭐ Hover Rating */}
                 <div className="absolute inset-0 bg-black bg-opacity-70 flex items-center justify-center text-white text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+<<<<<<< HEAD
   {ratingInfo ? (
     <div className="text-center text-3xl font-bold">
       <div className="flex justify-center mb-2">
@@ -255,6 +256,25 @@ export default function Home() {
         )}
       </section>
 
+=======
+                  {ratingInfo ? (
+                    <div className="text-center">
+                      ⭐ {ratingInfo.avg} / 5 <br />
+                      ({ratingInfo.count} review{ratingInfo.count > 1 ? "s" : ""})
+                    </div>
+                  ) : (
+                    "No ratings yet"
+                  )}
+                </div>
+              </div>
+            );
+          })
+        ) : (
+          <p className="text-center col-span-full text-gray-500 text-lg">No turfs found.</p>
+        )}
+      </section>
+
+>>>>>>> 7c0b461 (deploying)
       {/* Extras */}
       <Vlog />
       <Chatbot />

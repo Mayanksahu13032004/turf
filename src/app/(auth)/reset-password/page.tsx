@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 
-export default function ResetPasswordPage() {
+// 1. Move the form logic into a sub-component
+function ResetPasswordForm() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -43,22 +44,41 @@ export default function ResetPasswordPage() {
         <h1 className="text-xl font-bold mb-4">Reset Password</h1>
         <input
           type="password"
+          name="new-password"
           placeholder="New Password"
-          className="border p-2 w-full mb-4"
+          className="border p-2 w-full mb-4 text-black"
           value={newPassword}
           onChange={(e) => setNewPassword(e.target.value)}
+          required
         />
         <input
           type="password"
+          name="confirm-password"
           placeholder="Confirm Password"
-          className="border p-2 w-full mb-4"
+          className="border p-2 w-full mb-4 text-black"
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
+          required
         />
-        <button type="submit" className="bg-blue-600 text-white py-2 px-4 rounded w-full">
+        <button type="submit" className="bg-blue-600 text-white py-2 px-4 rounded w-full hover:bg-blue-700 transition">
           Reset Password
         </button>
       </form>
     </div>
+  );
+}
+
+// 2. Export the main page wrapped in Suspense
+export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-slate-200">
+        <div className="bg-white p-8 rounded shadow text-center">
+          <p className="text-gray-600">Loading reset form...</p>
+        </div>
+      </div>
+    }>
+      <ResetPasswordForm />
+    </Suspense>
   );
 }

@@ -83,6 +83,13 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
+    fetch("/api/updatePrice")
+      .then((res) => res.json())
+      .then((data) => setPrice(data.dynamicPrice))
+      .catch((err) => console.error("Error fetching price:", err));
+  }, []);
+
+  useEffect(() => {
     const fetchTurfs = async () => {
       try {
         const response = await fetch("/api/users/allturf");
@@ -174,7 +181,7 @@ export default function Home() {
               onChange={(e) => setSearchLocation(e.target.value)}
               className="w-full sm:w-80 p-3 border border-white rounded-lg shadow-sm bg-transparent text-white placeholder:text-gray-400"
             />
-            <input
+            <input  
               type="text"
               placeholder="Search by turf name..."
               value={searchName}
@@ -185,105 +192,77 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Turf Listings */}
-      <section className="px-4 py-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredTurfs.length > 0 ? (
-          filteredTurfs.map((turf) => {
-            const ratingInfo = ratings[turf._id];
+{/* Turf Listings */}
+<section className="px-4 py-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+  {filteredTurfs.length > 0 ? (
+    filteredTurfs.map((turf) => {
+      const randomSlot =
+        turf.availability?.length &&
+        turf.availability[Math.floor(Math.random() * turf.availability.length)]?.slots?.length
+          ? turf.availability[Math.floor(Math.random() * turf.availability.length)].slots[0]
+          : "No slots available";
 
-            return (
-              <div
-                key={turf._id}
-                onClick={() => router.push(`/user/exploreturf/${turf._id}`)}
-                className="relative group bg-white rounded-2xl shadow-md overflow-hidden cursor-pointer hover:shadow-xl transform hover:-translate-y-2 transition-all flex flex-col"
-              >
-                {/* Image */}
-                <div className="w-full h-48 sm:h-52 md:h-56 overflow-hidden">
-                  <img
-                    src={turf.images?.[0] || "/fallback-image.jpg"}
-                    alt={turf.name}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
+      return (
+        <div
+          key={turf._id}
+          onClick={() => router.push(`/user/exploreturf/${turf._id}`)}
+          className="relative group bg-white rounded-2xl shadow-md overflow-hidden cursor-pointer hover:shadow-xl transform hover:-translate-y-2 transition-all flex flex-col"
+        >
+          {/* Image */}
+          <div className="w-full h-48 sm:h-52 md:h-56 overflow-hidden">
+            <img
+              src={turf.images?.[0] || "/fallback-image.jpg"}
+              alt={turf.name}
+              className="w-full h-full object-cover"
+            />
+          </div>
 
-                {/* Content */}
-                <div className="flex flex-col flex-grow p-4">
-                  <h3 className="text-lg font-bold mb-1 truncate">{turf.name}</h3>
-                  <p className="text-sm text-gray-500 mb-2 truncate">📍 {turf.location}</p>
+          {/* Content */}
+          <div className="flex flex-col flex-grow p-4">
+            <h3 className="text-lg font-bold mb-1 truncate">{turf.name}</h3>
+            <p className="text-sm text-gray-500 mb-2 truncate">📍 {turf.location}</p>
 
-                  <div className="mt-auto">
-                    <p className="text-green-600 font-bold text-base">₹{turf.pricePerHour}/hr</p>
-                    {turf.dynamicPricePerHour && (
-                      <p
-                        className={`text-sm font-semibold mt-1 ${
-                          turf.dynamicPricePerHour < turf.pricePerHour
-                            ? "text-red-500"
-                            : "text-green-600"
-                        }`}
-                      >
-                        {turf.dynamicPricePerHour < turf.pricePerHour
-                          ? `🔥 ₹${turf.dynamicPricePerHour}/hour`
-                          : `💰 ₹${turf.dynamicPricePerHour}/hour`}
-                      </p>
-                    )}
-                  </div>
-                </div>
+            <div className="mt-auto">
+              <p className="text-green-600 font-bold text-base">₹{turf.pricePerHour}/hr</p>
+              {turf.dynamicPricePerHour && (
+                <p
+                  className={`text-sm font-semibold mt-1 ${
+                    turf.dynamicPricePerHour < turf.pricePerHour
+                      ? "text-red-500"
+                      : "text-green-600"
+                  }`}
+                >
+                  {turf.dynamicPricePerHour < turf.pricePerHour
+                    ? `🔥 ₹${turf.dynamicPricePerHour}/hour`
+                    : `💰 ₹${turf.dynamicPricePerHour}/hour`}
+                </p>
+              )}
+            </div>
+          </div>
 
-                {/* ⭐ Hover Rating */}
-                <div className="absolute inset-0 bg-black bg-opacity-70 flex items-center justify-center text-white text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-<<<<<<< HEAD
-  {ratingInfo ? (
-    <div className="text-center text-3xl font-bold">
-      <div className="flex justify-center mb-2">
-        {Array.from({ length: Math.round(ratingInfo.avg) }, (_, i) => (
-          <span className="text-2xl fonr-bold" key={i}>⭐</span>
-        ))}
-      </div>
-      {ratingInfo.avg} / 5 <br />
-      {/* ({ratingInfo.count} review{ratingInfo.count > 1 ? "s" : ""}) */}
-    </div>
-  ) : ( <div className="text-3xl font-bold">
-    "No ratings yet"
-    </div>
+          {/* Hover Overlay */}
+          <div className="absolute inset-0 bg-black bg-opacity-70 flex items-center justify-center text-white text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            Slot: {randomSlot}
+          </div>
+        </div>
+      );
+    })
+  ) : (
+    <p className="text-center col-span-full text-gray-500 text-lg">No turfs found.</p>
   )}
-</div>
+</section>
 
-              </div>
-            );
-          })
-        ) : (
-          <p className="text-center col-span-full text-gray-500 text-lg">No turfs found.</p>
-        )}
-      </section>
+<Vlog/>
+<Chatbot/>
+<AboutUs />
+<ReferralLink/>
+<ChatbotPromptExamples/>
+<Terms  />
+<Privacy/>
+<Notifications/>
 
-=======
-                  {ratingInfo ? (
-                    <div className="text-center">
-                      ⭐ {ratingInfo.avg} / 5 <br />
-                      ({ratingInfo.count} review{ratingInfo.count > 1 ? "s" : ""})
-                    </div>
-                  ) : (
-                    "No ratings yet"
-                  )}
-                </div>
-              </div>
-            );
-          })
-        ) : (
-          <p className="text-center col-span-full text-gray-500 text-lg">No turfs found.</p>
-        )}
-      </section>
 
->>>>>>> 7c0b461 (deploying)
-      {/* Extras */}
-      <Vlog />
-      <Chatbot />
-      <AboutUs />
-      <ReferralLink />
-      <ChatbotPromptExamples />
-      <Terms />
-      <Privacy />
-      <Notifications />
+      
     </div>
   );
 }
